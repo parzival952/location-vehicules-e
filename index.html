@@ -1276,10 +1276,10 @@ var adminLogin = document.getElementById('admin-login');
 var adminPanel = document.getElementById('admin-panel');
 
 function ouvrirLogin(){
-  document.getElementById('adm-email-wrap').style.display = (serveurActif() && !githubActif()) ? 'block' : 'none';
+  document.getElementById('adm-email-wrap').style.display = serveurActif() ? 'block' : 'none';
   var lbl = document.querySelector('label[for="adm-pass"]');
   var inp = document.getElementById('adm-pass');
-  if(githubActif()){
+  if(!serveurActif() && githubActif()){
     lbl.textContent = 'Jeton d\'accès GitHub';
     inp.placeholder = 'ghp_… ou github_pat_…';
   } else {
@@ -1306,7 +1306,7 @@ function loginRate(){ document.getElementById('adm-pass-err').style.display = 'b
 document.getElementById('adm-login-form').addEventListener('submit', function(e){
   e.preventDefault();
   var pass = document.getElementById('adm-pass').value;
-  if(githubActif()){
+  if(!serveurActif() && githubActif()){
     /* le "mot de passe" est le jeton d'accès GitHub : on le vérifie sur le dépôt */
     fetch(githubApi(''), { headers: { Authorization: 'Bearer ' + pass.trim(), Accept: 'application/vnd.github+json' } })
       .then(function(r){
@@ -1375,7 +1375,7 @@ function construireAdmin(){
 
   var note = document.createElement('p');
   note.className = 'adm-note';
-  note.textContent = githubActif()
+  note.textContent = (!serveurActif() && githubActif())
     ? '🟢 Connecté à GitHub. Modifiez, puis cliquez sur « Publier » : les changements sont en ligne pour tous en ~1 minute.'
     : (serveurActif()
       ? '🟢 Connecté au serveur. Modifiez, puis cliquez sur « Publier » : les visiteurs verront les changements immédiatement.'
@@ -1621,7 +1621,7 @@ function construireAdmin(){
     var pubStatus = document.createElement('p');
     pubStatus.className = 'adm-note';
     pub.addEventListener('click', function(){
-      if(githubActif()){ publierGitHub(pubStatus); } else { publierEnLigne(pubStatus); }
+      if(!serveurActif() && githubActif()){ publierGitHub(pubStatus); } else { publierEnLigne(pubStatus); }
     });
     card.appendChild(pub);
     card.appendChild(pubStatus);
