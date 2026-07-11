@@ -311,6 +311,10 @@
     width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
     background:rgba(0,0,0,.55);color:#fff;font-size:1rem;cursor:pointer;
   }
+  .cal-day.attente{background:rgba(232,168,60,.14);border-color:rgba(232,168,60,.45);color:#eec27a}
+  .dot.attente{background:rgba(232,168,60,.3);border:1px solid rgba(232,168,60,.6)}
+  #resa-cal{margin-top:20px;border-top:1px solid var(--line);padding-top:6px}
+  #rc-status{min-height:18px;text-align:center}
   /* ---------- OFFRES DU MOMENT ---------- */
   #offres{padding:56px 6vw 0}
   .offres-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;max-width:1000px;margin:0 auto}
@@ -446,9 +450,28 @@
     <div class="cal-grid" id="cal-grid"></div>
     <div class="cal-legend">
       <span><i class="dot free"></i> Disponible</span>
+      <span id="leg-attente" style="display:none"><i class="dot attente"></i> En attente</span>
       <span><i class="dot booked"></i> Réservé</span>
     </div>
     <a href="#contact" class="btn btn-primary cal-cta" id="cal-cta">Réserver ce véhicule</a>
+    <form id="resa-cal" style="display:none">
+      <div class="adm-row">
+        <div style="flex:1;min-width:130px">
+          <label for="rc-debut">Du</label>
+          <input type="date" id="rc-debut" required>
+        </div>
+        <div style="flex:1;min-width:130px">
+          <label for="rc-fin">Au</label>
+          <input type="date" id="rc-fin" required>
+        </div>
+      </div>
+      <label for="rc-nom">Votre nom</label>
+      <input id="rc-nom" required placeholder="Nom et prénom">
+      <label for="rc-tel">Votre téléphone</label>
+      <input id="rc-tel" type="tel" required placeholder="06 12 34 56 78">
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:18px">📅 Envoyer ma demande de réservation</button>
+      <p class="adm-note" id="rc-status"></p>
+    </form>
   </div>
 </div>
 
@@ -600,7 +623,7 @@
   <div class="cal-card admin-card" id="admin-card"></div>
 </div>
 
-<script id="site-data" type="application/json">{"config":{"tel":"+33600000000","telAffiche":"06 00 00 00 00","whatsapp":"33600000000","email":"parzival95200@gmail.com","motDePasse":"admin123","serveur":{"url":"","cle":""},"github":{"owner":"parzival952","repo":"location-vehicules-e","branche":"main"}},"vehicules":[{"id":"clio","nom":"Renault Clio 5 Esprit Alpine","sousTitre":"Modèle 2025 — la citadine au look sportif","tag":"Citadine · Esprit Alpine","tagOr":true,"couleur":"#1e4f8f","prix":45,"specs":["5 places","Hybride E-Tech","Boîte automatique","Finition Esprit Alpine","CarPlay / Android Auto"],"photos":[],"reservations":["2026-07-14","2026-07-15","2026-07-16","2026-07-25","2026-07-26","2026-08-03","2026-08-04","2026-08-05"]},{"id":"troc","nom":"Volkswagen T-Roc","sousTitre":"Modèle 2025 — confort et polyvalence","tag":"SUV Compact","tagOr":false,"couleur":"#4a3f6b","prix":59,"specs":["5 places","Boîte automatique","Grand coffre","Climatisation","Caméra de recul"],"photos":[],"reservations":["2026-07-18","2026-07-19","2026-08-01","2026-08-02","2026-08-10","2026-08-11","2026-08-12","2026-08-13"]}],"offres":[{"emoji":"🎉","titre":"−10% sur votre première location","texte":"Nouveau client ? Profitez de 10% de remise sur votre première réservation."},{"emoji":"🏷️","titre":"Semaine maligne : −20% dès 7 jours","texte":"Partez plus longtemps pour moins cher : la remise s'applique automatiquement dès 7 jours."}]}</script>
+<script id="site-data" type="application/json">{"config":{"tel":"+33600000000","telAffiche":"06 00 00 00 00","whatsapp":"33600000000","email":"parzival95200@gmail.com","motDePasse":"admin123","serveur":{"url":"https://xrzokecxzksfksuakjzm.supabase.co","cle":"sb_publishable_sjILIIPhovDSFlkDt76MTQ_edvnkOjk"},"github":{"owner":"parzival952","repo":"location-vehicules-e","branche":"main"}},"vehicules":[{"id":"clio","nom":"Renault Clio 5 Esprit Alpine","sousTitre":"Modèle 2025 — la citadine au look sportif","tag":"Citadine · Esprit Alpine","tagOr":true,"couleur":"#1e4f8f","prix":45,"specs":["5 places","Hybride E-Tech","Boîte automatique","Finition Esprit Alpine","CarPlay / Android Auto"],"photos":[],"reservations":["2026-07-14","2026-07-15","2026-07-16","2026-07-25","2026-07-26","2026-08-03","2026-08-04","2026-08-05"]},{"id":"troc","nom":"Volkswagen T-Roc","sousTitre":"Modèle 2025 — confort et polyvalence","tag":"SUV Compact","tagOr":false,"couleur":"#4a3f6b","prix":59,"specs":["5 places","Boîte automatique","Grand coffre","Climatisation","Caméra de recul"],"photos":[],"reservations":["2026-07-18","2026-07-19","2026-08-01","2026-08-02","2026-08-10","2026-08-11","2026-08-12","2026-08-13"]}],"offres":[{"emoji":"🎉","titre":"−10% sur votre première location","texte":"Nouveau client ? Profitez de 10% de remise sur votre première réservation."},{"emoji":"🏷️","titre":"Semaine maligne : −20% dès 7 jours","texte":"Partez plus longtemps pour moins cher : la remise s'applique automatiquement dès 7 jours."}]}</script>
 <script>
 /* =====================================================
    DONNÉES DU SITE
@@ -642,7 +665,39 @@ function githubApi(chemin){
 function urlServeur(chemin){
   return SITE.config.serveur.url.replace(/\/+$/, '') + chemin;
 }
+function chargerDataJson(){
+  if(!githubActif()) return;
+  fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(d){
+      if(d && d.vehicules && d.vehicules.length){
+        var sv = SITE.config.serveur, gh = SITE.config.github;
+        SITE = d;
+        SITE.config.serveur = sv;
+        SITE.config.github = gh;
+        renderAll();
+      }
+    })
+    .catch(function(){});
+}
 function chargerDepuisServeur(){
+  if(serveurActif()){
+    fetch(urlServeur('/rest/v1/contenu?id=eq.1&select=data'), {
+      headers: { apikey: SITE.config.serveur.cle }
+    }).then(function(r){ return r.json(); }).then(function(rows){
+      if(rows && rows[0] && rows[0].data && rows[0].data.vehicules && rows[0].data.vehicules.length){
+        var connexion = SITE.config.serveur, gh = SITE.config.github;
+        SITE = rows[0].data;
+        SITE.config.serveur = connexion;
+        SITE.config.github = gh;
+        renderAll();
+      } else {
+        chargerDataJson();
+      }
+    }).catch(chargerDataJson);
+    chargerReservations();
+    return;
+  }
   if(githubActif()){
     /* Sur GitHub Pages, les données vivent dans data.json à côté du site */
     fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
@@ -661,7 +716,7 @@ function chargerDepuisServeur(){
   }
   if(!serveurActif()) return;
   fetch(urlServeur('/rest/v1/contenu?id=eq.1&select=data'), {
-    headers: { apikey: SITE.config.serveur.cle, Authorization: 'Bearer ' + SITE.config.serveur.cle }
+    headers: { apikey: SITE.config.serveur.cle }
   }).then(function(r){ return r.json(); }).then(function(rows){
     if(rows && rows[0] && rows[0].data && rows[0].data.vehicules && rows[0].data.vehicules.length){
       var connexion = SITE.config.serveur; /* la connexion du fichier reste prioritaire */
@@ -677,7 +732,7 @@ function publierEnLigne(statusEl){
     method: 'PATCH',
     headers: {
       apikey: SITE.config.serveur.cle,
-      Authorization: 'Bearer ' + (SESSION_TOKEN || SITE.config.serveur.cle),
+      Authorization: 'Bearer ' + SESSION_TOKEN,
       'Content-Type': 'application/json',
       Prefer: 'return=minimal'
     },
@@ -717,6 +772,30 @@ function publierGitHub(statusEl){
         : '❌ Erreur ' + r.status + ' — vérifiez que votre jeton est valide et réessayez.';
     })
     .catch(function(){ statusEl.textContent = '❌ Impossible de joindre GitHub. Vérifiez votre connexion.'; });
+}
+
+/* ---------- Réservations en ligne (synchronisées) ---------- */
+var RESA = [];
+function chargerReservations(){
+  if(!serveurActif()) return Promise.resolve();
+  return fetch(urlServeur('/rest/v1/disponibilites?select=*'), {
+    headers: { apikey: SITE.config.serveur.cle }
+  }).then(function(r){ return r.json(); }).then(function(rows){
+    if(Array.isArray(rows)) RESA = rows;
+  }).catch(function(){});
+}
+function statutJour(manuel, veh, d){
+  var s = iso(d);
+  if(manuel.indexOf(s) !== -1) return 'reserve';
+  var attente = false;
+  for(var i = 0; i < RESA.length; i++){
+    var r = RESA[i];
+    if(r.vehicule === veh && r.debut <= s && s <= r.fin){
+      if(r.statut === 'confirmee') return 'reserve';
+      if(r.statut === 'attente') attente = true;
+    }
+  }
+  return attente ? 'attente' : 'libre';
 }
 
 /* ---------- Silhouette SVG (véhicule sans photo) ---------- */
@@ -1011,8 +1090,10 @@ function renderCal(){
     var cell = document.createElement('div');
     cell.textContent = j;
     var cls = 'cal-day ';
+    var st = (d < calNow) ? 'passe' : statutJour(booked, calVeh, d);
     if(d < calNow){ cls += 'past'; }
-    else if(booked.indexOf(iso(d)) !== -1){ cls += 'booked'; cell.title = 'Réservé'; }
+    else if(st === 'reserve'){ cls += 'booked'; cell.title = 'Réservé'; }
+    else if(st === 'attente'){ cls += 'attente'; cell.title = 'Demande en attente'; }
     else { cls += 'free'; cell.title = 'Disponible'; }
     cell.className = cls;
     grid.appendChild(cell);
@@ -1033,6 +1114,13 @@ function openCal(vehId){
   calView = new Date(calNow.getFullYear(), calNow.getMonth(), 1);
   var v = vehById(vehId);
   document.getElementById('cal-veh-title').textContent = v ? v.nom : '';
+  var enServeur = serveurActif();
+  document.getElementById('resa-cal').style.display = enServeur ? 'block' : 'none';
+  document.getElementById('cal-cta').style.display = enServeur ? 'none' : 'block';
+  document.getElementById('leg-attente').style.display = enServeur ? 'flex' : 'none';
+  document.getElementById('rc-status').textContent = '';
+  document.getElementById('rc-debut').min = todayIso;
+  document.getElementById('rc-fin').min = todayIso;
   renderCal();
   calModal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1041,6 +1129,44 @@ function closeCal(){
   calModal.classList.remove('open');
   document.body.style.overflow = '';
 }
+document.getElementById('resa-cal').addEventListener('submit', function(e){
+  e.preventDefault();
+  var statusEl = document.getElementById('rc-status');
+  var d1 = document.getElementById('rc-debut').value;
+  var d2 = document.getElementById('rc-fin').value;
+  var nom = document.getElementById('rc-nom').value.trim();
+  var tel = document.getElementById('rc-tel').value.trim();
+  if(!d1 || !d2 || d2 < d1){ statusEl.textContent = '⚠️ Vérifiez vos dates.'; return; }
+  var v = vehById(calVeh);
+  var manuel = (v && v.reservations) || [];
+  for(var d = new Date(d1); d <= new Date(d2); d.setDate(d.getDate() + 1)){
+    if(statutJour(manuel, calVeh, d) === 'reserve'){
+      statusEl.textContent = "⚠️ Certains de ces jours sont déjà réservés. Choisissez d'autres dates.";
+      return;
+    }
+  }
+  statusEl.textContent = '⏳ Envoi en cours…';
+  fetch(urlServeur('/rest/v1/reservations'), {
+    method: 'POST',
+    headers: {
+      apikey: SITE.config.serveur.cle,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal'
+    },
+    body: JSON.stringify({ vehicule: calVeh, debut: d1, fin: d2, nom: nom, telephone: tel })
+  }).then(function(r){
+    if(r.ok){
+      RESA.push({ vehicule: calVeh, debut: d1, fin: d2, statut: 'attente' });
+      renderCal();
+      document.getElementById('resa-cal').reset();
+      statusEl.textContent = '✅ Demande envoyée ! Nous vous confirmons très vite par téléphone.';
+    } else {
+      statusEl.textContent = '❌ Erreur ' + r.status + ' — réessayez ou contactez-nous par téléphone.';
+    }
+  }).catch(function(){
+    statusEl.textContent = '❌ Connexion impossible. Contactez-nous par téléphone.';
+  });
+});
 document.getElementById('cal-close').addEventListener('click', closeCal);
 document.getElementById('cal-cta').addEventListener('click', closeCal);
 calModal.addEventListener('click', function(e){ if(e.target === calModal) closeCal(); });
@@ -1260,6 +1386,75 @@ function construireAdmin(){
   secC.appendChild(champ('Serveur — URL Supabase (optionnel)', SITE.config.serveur.url, function(v){ SITE.config.serveur.url = v.trim(); }));
   secC.appendChild(champ('Serveur — clé publique « anon » (optionnel)', SITE.config.serveur.cle, function(v){ SITE.config.serveur.cle = v.trim(); }));
   card.appendChild(secC);
+
+  /* --- Demandes de réservation (mode serveur) --- */
+  if(serveurActif() && SESSION_TOKEN){
+    var secR = document.createElement('div');
+    secR.className = 'adm-veh';
+    var hR = document.createElement('h4');
+    hR.textContent = '📋 Demandes de réservation';
+    secR.appendChild(hR);
+    var listeR = document.createElement('div');
+    secR.appendChild(listeR);
+    var majResa = function(){
+      listeR.innerHTML = '<p class="adm-note">Chargement…</p>';
+      fetch(urlServeur('/rest/v1/reservations?select=*&order=created_at.desc'), {
+        headers: { apikey: SITE.config.serveur.cle, Authorization: 'Bearer ' + SESSION_TOKEN }
+      }).then(function(r){ return r.json(); }).then(function(rows){
+        listeR.innerHTML = '';
+        if(!Array.isArray(rows) || !rows.length){
+          listeR.innerHTML = '<p class="adm-note">Aucune demande pour le moment.</p>';
+          return;
+        }
+        rows.forEach(function(rw){
+          var bloc = document.createElement('div');
+          bloc.style.cssText = 'border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px';
+          var v = vehById(rw.vehicule);
+          var badge = rw.statut === 'confirmee' ? '🟢 Confirmée' : (rw.statut === 'refusee' ? '🔴 Refusée' : '🟠 En attente');
+          var info = document.createElement('div');
+          info.innerHTML = '<b>' + (rw.nom || '') + '</b> — ' + (rw.telephone || '') +
+            '<br><span style="color:var(--muted);font-size:.86rem">' + (v ? v.nom : rw.vehicule) +
+            ' · du ' + rw.debut.split('-').reverse().join('/') + ' au ' + rw.fin.split('-').reverse().join('/') +
+            ' · ' + badge + '</span>';
+          bloc.appendChild(info);
+          var actions = document.createElement('div');
+          actions.className = 'adm-row';
+          actions.style.marginTop = '10px';
+          var action = function(txt, statut){
+            var b = document.createElement('button');
+            b.className = 'btn btn-ghost';
+            b.style.cssText = 'padding:8px 14px;font-size:.82rem';
+            b.textContent = txt;
+            b.addEventListener('click', function(){
+              var opts = statut === null
+                ? { method: 'DELETE' }
+                : { method: 'PATCH', body: JSON.stringify({ statut: statut }) };
+              opts.headers = {
+                apikey: SITE.config.serveur.cle,
+                Authorization: 'Bearer ' + SESSION_TOKEN,
+                'Content-Type': 'application/json',
+                Prefer: 'return=minimal'
+              };
+              fetch(urlServeur('/rest/v1/reservations?id=eq.' + rw.id), opts).then(function(){
+                majResa();
+                chargerReservations();
+              });
+            });
+            return b;
+          };
+          if(rw.statut !== 'confirmee') actions.appendChild(action('✅ Confirmer', 'confirmee'));
+          if(rw.statut !== 'refusee') actions.appendChild(action('❌ Refuser', 'refusee'));
+          actions.appendChild(action('🗑 Supprimer', null));
+          bloc.appendChild(actions);
+          listeR.appendChild(bloc);
+        });
+      }).catch(function(){
+        listeR.innerHTML = '<p class="adm-note">❌ Impossible de charger les demandes.</p>';
+      });
+    };
+    majResa();
+    card.appendChild(secR);
+  }
 
   /* --- Offres du moment --- */
   var secO = document.createElement('div');
