@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LB Location — Location de véhicules | Clio 5 Esprit Alpine, T-Roc</title>
+<meta name="description" content="Location de véhicules : Renault Clio 5 Esprit Alpine 2025, Volkswagen T-Roc 2025. Réservation simple par téléphone, WhatsApp ou formulaire.">
+<style>
+  :root{
+    --bg:#0b0d12;
+    --bg2:#12151d;
+    --card:#161a24;
+    --line:rgba(255,255,255,.08);
+    --text:#eef1f6;
+    --muted:#9aa3b2;
+    --accent:#3d7bff;
+    --accent2:#6ea8ff;
+    --gold:#e8c15a;
+    --radius:18px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6;
+  }
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 6vw;
+    background:rgba(11,13,18,.85);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{font-size:1.25rem;font-weight:800;letter-spacing:.5px}
+  .logo span{color:var(--accent)}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:.95rem;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .btn{
+    display:inline-block;padding:12px 26px;border-radius:999px;
+    font-weight:700;text-decoration:none;font-size:.95rem;
+    transition:transform .15s, box-shadow .15s;cursor:pointer;border:none;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#2a5fd6);color:#fff;box-shadow:0 6px 24px rgba(61,123,255,.35)}
+  .btn-ghost{border:1px solid var(--line);color:var(--text);background:transparent}
+  .btn-wa{background:#1fae54;color:#fff;box-shadow:0 6px 24px rgba(31,174,84,.3)}
+  /* ---------- HERO ---------- */
+  header{
+    position:relative;overflow:hidden;
+    padding:90px 6vw 70px;text-align:center;
+    background:
+      radial-gradient(900px 400px at 20% -10%, rgba(61,123,255,.18), transparent 60%),
+      radial-gradient(700px 380px at 85% 0%, rgba(232,193,90,.10), transparent 60%),
+      var(--bg);
+  }
+  .badge{
+    display:inline-block;padding:7px 18px;border-radius:999px;
+    border:1px solid var(--line);color:var(--accent2);
+    font-size:.82rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+    margin-bottom:22px;background:rgba(61,123,255,.08);
+  }
+  h1{font-size:clamp(2.1rem,5vw,3.4rem);font-weight:800;line-height:1.15;margin-bottom:18px}
+  h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);max-width:640px;margin:0 auto 34px;font-size:1.08rem}
+  .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .hero-stats{
+    display:flex;gap:0;justify-content:center;flex-wrap:wrap;margin-top:56px;
+  }
+  .stat{padding:0 34px;border-right:1px solid var(--line)}
+  .stat:last-child{border-right:none}
+  .stat b{display:block;font-size:1.5rem;color:var(--text)}
+  .stat span{color:var(--muted);font-size:.85rem}
+  /* ---------- SECTIONS ---------- */
+  section{padding:80px 6vw}
+  .sec-head{text-align:center;margin-bottom:52px}
+  .sec-head .badge{margin-bottom:14px}
+  h2{font-size:clamp(1.6rem,3.5vw,2.3rem);font-weight:800}
+  .sec-head p{color:var(--muted);margin-top:10px}
+  /* ---------- FLEET ---------- */
+  .fleet{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:26px;max-width:860px;margin:0 auto}
+  .car{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;display:flex;flex-direction:column;
+    transition:transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .car:hover{transform:translateY(-6px);border-color:rgba(61,123,255,.4);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+  .car-visual{position:relative;height:190px;display:flex;align-items:center;justify-content:center}
+  .car-visual svg{width:78%;height:auto;filter:drop-shadow(0 14px 18px rgba(0,0,0,.45))}
+  .v-clio{background:linear-gradient(140deg,#182236,#0e1420 65%)}
+  .v-alpine{background:linear-gradient(140deg,#0e2a4a,#0a1526 60%)}
+  .v-troc{background:linear-gradient(140deg,#2a2438,#141020 65%)}
+  .car-visual > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .tag{
+    position:absolute;top:14px;left:14px;z-index:2;
+    font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    padding:5px 12px;border-radius:999px;background:rgba(0,0,0,.45);
+    border:1px solid var(--line);color:var(--accent2);
+  }
+  .tag.gold{color:var(--gold)}
+  .car-body{padding:24px;display:flex;flex-direction:column;flex:1}
+  .car-body h3{font-size:1.28rem;margin-bottom:2px}
+  .car-body .year{color:var(--muted);font-size:.9rem;margin-bottom:14px}
+  .specs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .specs li{
+    list-style:none;font-size:.8rem;color:var(--muted);
+    border:1px solid var(--line);padding:5px 12px;border-radius:999px;background:var(--bg2);
+  }
+  .price-row{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;padding-top:16px;border-top:1px solid var(--line)}
+  .price b{font-size:1.7rem;color:var(--text)}
+  .price span{color:var(--muted);font-size:.85rem}
+  .car .btn{padding:10px 20px;font-size:.88rem}
+  /* ---------- CONDITIONS ---------- */
+  #conditions{background:var(--bg2)}
+  .conds{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px;max-width:1100px;margin:0 auto}
+  .cond{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;text-align:center;
+  }
+  .cond .ico{font-size:1.9rem;margin-bottom:12px}
+  .cond h4{margin-bottom:8px;font-size:1.02rem}
+  .cond p{color:var(--muted);font-size:.9rem}
+  /* ---------- CONTACT ---------- */
+  .contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:34px;max-width:1050px;margin:0 auto}
+  .contact-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:34px}
+  .contact-card h3{margin-bottom:8px}
+  .contact-card>p{color:var(--muted);font-size:.94rem;margin-bottom:22px}
+  .quick-btns{display:flex;flex-direction:column;gap:14px}
+  .quick-btns .btn{text-align:center;font-size:1rem}
+  .quick-note{margin-top:18px;color:var(--muted);font-size:.82rem;text-align:center}
+  label{display:block;font-size:.85rem;color:var(--muted);margin:14px 0 6px}
+  input,select,textarea{
+    width:100%;padding:12px 14px;border-radius:10px;
+    background:var(--bg2);border:1px solid var(--line);color:var(--text);
+    font-family:inherit;font-size:.95rem;outline:none;transition:border-color .2s;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  textarea{resize:vertical;min-height:90px}
+  form .btn{width:100%;margin-top:22px}
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--line);padding:34px 6vw;text-align:center;
+    color:var(--muted);font-size:.88rem;background:var(--bg);
+  }
+  /* ---------- PREMIUM : reveal au scroll ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease, transform .7s ease}
+  .reveal.visible{opacity:1;transform:none}
+  .reveal:nth-child(2){transition-delay:.1s}
+  .reveal:nth-child(3){transition-delay:.2s}
+  /* ---------- PREMIUM : spotlight sur les cartes ---------- */
+  .car{position:relative}
+  .car::before{
+    content:"";position:absolute;inset:0;border-radius:var(--radius);
+    background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%), rgba(110,168,255,.13), transparent 45%);
+    opacity:0;transition:opacity .3s;pointer-events:none;z-index:1;
+  }
+  .car:hover::before{opacity:1}
+  /* ---------- PREMIUM : simulateur ---------- */
+  #simulateur{background:var(--bg2)}
+  .sim{
+    max-width:860px;margin:0 auto;background:var(--card);
+    border:1px solid var(--line);border-radius:var(--radius);padding:38px;
+    box-shadow:0 24px 60px rgba(0,0,0,.35);
+  }
+  .sim-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+  .sim-result{
+    margin-top:26px;padding:24px;border-radius:14px;text-align:center;
+    background:linear-gradient(135deg,rgba(61,123,255,.14),rgba(232,193,90,.08));
+    border:1px solid rgba(61,123,255,.3);
+  }
+  .sim-result .total{font-size:2.3rem;font-weight:800;background:linear-gradient(90deg,var(--accent2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sim-result .detail{color:var(--muted);font-size:.9rem;margin-top:6px}
+  .sim-result .promo{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;background:rgba(31,174,84,.15);border:1px solid rgba(31,174,84,.4);color:#5fd68a;font-size:.82rem;font-weight:700}
+  /* ---------- PREMIUM : avis ---------- */
+  .avis-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;max-width:1100px;margin:0 auto}
+  .avis{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;
+  }
+  .stars{color:var(--gold);letter-spacing:3px;margin-bottom:12px}
+  .avis p{color:var(--text);font-size:.95rem;font-style:italic}
+  .avis .who{display:flex;align-items:center;gap:12px;margin-top:18px}
+  .avis .who .avatar{
+    width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-weight:800;background:linear-gradient(135deg,var(--accent),#2a5fd6);color:#fff;
+  }
+  .avis .who b{display:block;font-size:.92rem}
+  .avis .who span{color:var(--muted);font-size:.8rem}
+  /* ---------- PREMIUM : FAQ ---------- */
+  .faq{max-width:760px;margin:0 auto}
+  .faq-item{border:1px solid var(--line);border-radius:14px;margin-bottom:12px;background:var(--card);overflow:hidden}
+  .faq-q{
+    width:100%;text-align:left;padding:18px 22px;background:none;border:none;
+    color:var(--text);font-size:1rem;font-weight:600;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;font-family:inherit;
+  }
+  .faq-q .chev{transition:transform .3s;color:var(--accent2)}
+  .faq-item.open .chev{transform:rotate(180deg)}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .faq-a p{padding:0 22px 18px;color:var(--muted);font-size:.93rem}
+  /* ---------- PREMIUM : bouton WhatsApp flottant ---------- */
+  .wa-float{
+    position:fixed;bottom:24px;right:24px;z-index:60;
+    width:58px;height:58px;border-radius:50%;
+    background:#1fae54;display:flex;align-items:center;justify-content:center;
+    font-size:1.6rem;text-decoration:none;
+    box-shadow:0 10px 30px rgba(31,174,84,.45);
+    animation:pulse 2.4s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 10px 30px rgba(31,174,84,.45),0 0 0 0 rgba(31,174,84,.4)}
+    70%{box-shadow:0 10px 30px rgba(31,174,84,.45),0 0 0 16px rgba(31,174,84,0)}
+    100%{box-shadow:0 10px 30px rgba(31,174,84,.45),0 0 0 0 rgba(31,174,84,0)}
+  }
+  nav.scrolled{box-shadow:0 8px 30px rgba(0,0,0,.4)}
+  /* ---------- PREMIUM : calendrier de disponibilités (fenêtre) ---------- */
+  .dispo-btn{
+    width:100%;margin-bottom:16px;padding:11px 16px;border-radius:12px;
+    border:1px solid rgba(61,123,255,.35);background:rgba(61,123,255,.08);
+    color:var(--accent2);font-weight:600;font-size:.9rem;cursor:pointer;
+    font-family:inherit;transition:all .2s;
+  }
+  .dispo-btn:hover{background:rgba(61,123,255,.16);border-color:var(--accent)}
+  .cal-modal{
+    position:fixed;inset:0;z-index:100;display:none;
+    align-items:center;justify-content:center;padding:20px;
+    background:rgba(5,7,10,.88);backdrop-filter:blur(8px);
+  }
+  .cal-modal.open{display:flex}
+  .cal-card{
+    position:relative;width:min(560px,94vw);max-height:92vh;overflow-y:auto;
+    background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:30px;
+    box-shadow:0 24px 60px rgba(0,0,0,.5);
+    animation:calPop .25s ease;
+  }
+  @keyframes calPop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+  .cal-close{
+    position:absolute;top:14px;right:14px;
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--line);
+    background:var(--bg2);color:var(--text);font-size:.9rem;cursor:pointer;transition:all .2s;
+  }
+  .cal-close:hover{border-color:var(--accent)}
+  .cal-veh{
+    text-align:center;font-weight:800;font-size:1.15rem;margin-bottom:4px;
+    background:linear-gradient(90deg,var(--accent2),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .cal-cta{display:block;text-align:center;margin-top:20px}
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .cal-head b{font-size:1.08rem;text-transform:capitalize}
+  .cal-nav{
+    width:38px;height:38px;border-radius:50%;border:1px solid var(--line);
+    background:var(--bg2);color:var(--text);font-size:1rem;cursor:pointer;transition:all .2s;
+  }
+  .cal-nav:hover:not(:disabled){border-color:var(--accent)}
+  .cal-nav:disabled{opacity:.3;cursor:default}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cal-dow{text-align:center;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:6px 0}
+  .cal-day{
+    aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+    border-radius:10px;font-size:.88rem;background:var(--bg2);border:1px solid transparent;
+  }
+  .cal-day.free{border-color:rgba(31,174,84,.35);color:#7fdea3}
+  .cal-day.booked{background:rgba(224,82,82,.12);border-color:rgba(224,82,82,.35);color:#e88;text-decoration:line-through}
+  .cal-day.past{opacity:.25}
+  .cal-day.empty{background:transparent}
+  .cal-legend{display:flex;gap:22px;justify-content:center;margin-top:20px;flex-wrap:wrap;color:var(--muted);font-size:.84rem}
+  .cal-legend span{display:flex;align-items:center;gap:8px}
+  .dot{width:12px;height:12px;border-radius:4px;display:inline-block}
+  .dot.free{background:rgba(31,174,84,.25);border:1px solid rgba(31,174,84,.5)}
+  .dot.booked{background:rgba(224,82,82,.25);border:1px solid rgba(224,82,82,.5)}
+  /* ---------- PREMIUM : galerie / lightbox ---------- */
+  .gal-btn{
+    position:absolute;bottom:12px;right:12px;z-index:2;
+    padding:7px 14px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(0,0,0,.55);backdrop-filter:blur(6px);color:var(--text);
+    font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;
+  }
+  .gal-btn:hover{border-color:var(--accent);background:rgba(0,0,0,.75)}
+  .lightbox{
+    position:fixed;inset:0;z-index:100;display:none;
+    align-items:center;justify-content:center;
+    background:rgba(5,7,10,.92);backdrop-filter:blur(8px);
+  }
+  .lightbox.open{display:flex}
+  .lb-inner{width:min(860px,92vw);text-align:center}
+  .lb-stage{
+    position:relative;border-radius:var(--radius);overflow:hidden;
+    border:1px solid var(--line);background:var(--card);
+    aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+  }
+  .lb-stage img{width:100%;height:100%;object-fit:cover}
+  .lb-ph{
+    width:100%;height:100%;display:flex;flex-direction:column;gap:14px;
+    align-items:center;justify-content:center;color:var(--muted);
+  }
+  .lb-ph .cam{font-size:2.6rem}
+  .lb-ph svg{width:46%;height:auto;opacity:.9}
+  .lb-title{margin-top:16px;font-weight:700}
+  .lb-count{color:var(--muted);font-size:.85rem;margin-top:4px}
+  .lb-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:46px;height:46px;border-radius:50%;border:1px solid var(--line);
+    background:rgba(0,0,0,.55);color:#fff;font-size:1.2rem;cursor:pointer;transition:all .2s;
+  }
+  .lb-arrow:hover{border-color:var(--accent)}
+  .lb-prev{left:14px}.lb-next{right:14px}
+  .lb-close{
+    position:absolute;top:14px;right:14px;z-index:2;
+    width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
+    background:rgba(0,0,0,.55);color:#fff;font-size:1rem;cursor:pointer;
+  }
+  /* ---------- ADMIN ---------- */
+  .admin-card{width:min(680px,94vw)}
+  .adm-login-card{width:min(400px,94vw)}
+  .adm-titre{text-align:center;margin-bottom:6px}
+  .adm-note{color:var(--muted);font-size:.83rem;text-align:center;margin:8px 0 18px}
+  .adm-veh{border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;background:var(--bg2)}
+  .adm-veh h4{margin-bottom:12px}
+  .adm-field{margin-bottom:12px}
+  .adm-field label{display:block;font-size:.85rem;color:var(--muted);margin:0 0 6px}
+  .adm-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .adm-row input{flex:1;min-width:130px}
+  .adm-row .btn{padding:10px 18px;font-size:.88rem}
+  .adm-thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .adm-thumb{position:relative;width:96px;height:64px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+  .adm-thumb img{width:100%;height:100%;object-fit:cover}
+  .adm-thumb button{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,.7);color:#fff;font-size:.65rem;cursor:pointer}
+  .adm-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .adm-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.35);color:#e88;font-size:.82rem}
+  .adm-chip button{border:none;background:none;color:#e88;cursor:pointer;font-size:.75rem}
+  .adm-add{width:100%;margin-bottom:14px}
+  .adm-export{width:100%;background:linear-gradient(135deg,#1fae54,#178a42);color:#fff;box-shadow:0 6px 24px rgba(31,174,84,.3);margin-bottom:4px}
+  .adm-del{width:100%;padding:9px;border-radius:10px;border:1px solid rgba(224,82,82,.4);background:rgba(224,82,82,.08);color:#e88;cursor:pointer;font-family:inherit;font-size:.85rem;transition:all .2s}
+  .adm-del:hover{background:rgba(224,82,82,.16)}
+  .adm-footer-link{color:var(--muted);font-size:.8rem;text-decoration:none;border-bottom:1px dotted var(--muted)}
+  .adm-footer-link:hover{color:var(--text)}
+  input[type="file"]{padding:8px;font-size:.85rem}
+  @media(max-width:840px){
+    .nav-links a:not(.btn){display:none}
+    .contact-wrap{grid-template-columns:1fr}
+    .stat{padding:10px 22px;border-right:none}
+    .sim-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">LB <span>Location</span></div>
+  <div class="nav-links">
+    <a href="#vehicules">Nos véhicules</a>
+    <a href="#simulateur">Simulateur</a>
+    <a href="#conditions">Conditions</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+    <a href="#contact" class="btn btn-primary">Réserver</a>
+  </div>
+</nav>
+
+<header>
+  <span class="badge">Location de véhicules</span>
+  <h1>Roulez avec <em>style</em>,<br>en ville comme en week-end</h1>
+  <p class="sub">Deux véhicules récents et entretenus, disponibles à la location à la journée, au week-end ou à la semaine. Réservation simple et rapide.</p>
+  <div class="hero-cta">
+    <a href="#vehicules" class="btn btn-primary">Découvrir les véhicules</a>
+    <a href="#contact" class="btn btn-ghost">Nous contacter</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><b id="stat-count">2</b><span>véhicules récents</span></div>
+    <div class="stat"><b id="stat-min">Dès 45€</b><span>par jour</span></div>
+    <div class="stat"><b>7j/7</b><span>disponibilité</span></div>
+  </div>
+</header>
+
+<section id="vehicules">
+  <div class="sec-head">
+    <span class="badge">Notre flotte</span>
+    <h2>Nos véhicules en location</h2>
+    <p>Des modèles 2025, propres, révisés et prêts à partir.</p>
+  </div>
+  <div class="fleet" id="fleet"></div>
+</section>
+
+<section id="simulateur">
+  <div class="sec-head">
+    <span class="badge">Estimation instantanée</span>
+    <h2>Simulateur de prix</h2>
+    <p>Tarifs dégressifs : −10% dès 3 jours, −20% dès 7 jours.</p>
+  </div>
+  <div class="sim">
+    <div class="sim-grid">
+      <div>
+        <label for="sim-veh">Véhicule</label>
+        <select id="sim-veh"></select>
+      </div>
+      <div>
+        <label for="sim-debut">Date de départ</label>
+        <input type="date" id="sim-debut">
+      </div>
+      <div>
+        <label for="sim-fin">Date de retour</label>
+        <input type="date" id="sim-fin">
+      </div>
+    </div>
+    <div class="sim-result">
+      <div class="total" id="sim-total">—</div>
+      <div class="detail" id="sim-detail">Choisissez un véhicule et vos dates</div>
+      <span class="promo" id="sim-promo" style="display:none"></span>
+    </div>
+  </div>
+</section>
+
+<div class="cal-modal" id="cal-modal">
+  <div class="cal-card">
+    <button class="cal-close" id="cal-close">✕</button>
+    <div class="cal-veh" id="cal-veh-title"></div>
+    <div class="cal-head">
+      <button class="cal-nav" id="cal-prev">‹</button>
+      <b id="cal-month"></b>
+      <button class="cal-nav" id="cal-next">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-legend">
+      <span><i class="dot free"></i> Disponible</span>
+      <span><i class="dot booked"></i> Réservé</span>
+    </div>
+    <a href="#contact" class="btn btn-primary cal-cta" id="cal-cta">Réserver ce véhicule</a>
+  </div>
+</div>
+
+<section id="conditions">
+  <div class="sec-head">
+    <span class="badge">Bon à savoir</span>
+    <h2>Conditions de location</h2>
+  </div>
+  <div class="conds">
+    <div class="cond"><div class="ico">🪪</div><h4>Permis & âge</h4><p>Permis B valide depuis 2 ans minimum. 21 ans minimum.</p></div>
+    <div class="cond"><div class="ico">🛡️</div><h4>Caution</h4><p>Dépôt de garantie par empreinte bancaire, restitué en fin de location.</p></div>
+    <div class="cond"><div class="ico">🛣️</div><h4>Kilométrage</h4><p>200 km/jour inclus. Kilomètres supplémentaires facturés au tarif convenu.</p></div>
+    <div class="cond"><div class="ico">⛽</div><h4>Carburant</h4><p>Véhicule remis avec le plein, à rendre avec le plein.</p></div>
+  </div>
+</section>
+
+<section id="avis">
+  <div class="sec-head">
+    <span class="badge">Ils nous font confiance</span>
+    <h2>Avis de nos clients</h2>
+  </div>
+  <div class="avis-grid">
+    <div class="avis">
+      <div class="stars">★★★★★</div>
+      <p>« Clio Esprit Alpine superbe, intérieur sportif et consommation mini grâce à l'hybride. Propriétaire très arrangeant ! »</p>
+      <div class="who"><div class="avatar">T</div><div><b>Thomas R.</b><span>Location Clio Esprit Alpine — juin 2026</span></div></div>
+    </div>
+    <div class="avis">
+      <div class="stars">★★★★★</div>
+      <p>« Clio nickel, propre et économique. Parfait pour mes déplacements de la semaine. Je recommande. »</p>
+      <div class="who"><div class="avatar">S</div><div><b>Sarah M.</b><span>Location Clio 5 — mai 2026</span></div></div>
+    </div>
+    <div class="avis">
+      <div class="stars">★★★★★</div>
+      <p>« T-Roc très confortable pour nos vacances en famille. Communication au top, tout était simple. »</p>
+      <div class="who"><div class="avatar">K</div><div><b>Karim B.</b><span>Location T-Roc — avril 2026</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="background:var(--bg2)">
+  <div class="sec-head">
+    <span class="badge">Questions fréquentes</span>
+    <h2>FAQ</h2>
+  </div>
+  <div class="faq">
+    <div class="faq-item">
+      <button class="faq-q">Quels documents dois-je fournir ? <span class="chev">▾</span></button>
+      <div class="faq-a"><p>Une pièce d'identité, un permis de conduire valide depuis au moins 2 ans et un justificatif de domicile de moins de 3 mois.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Comment fonctionne la caution ? <span class="chev">▾</span></button>
+      <div class="faq-a"><p>Une empreinte bancaire est prise au départ (sans débit) et libérée à la restitution du véhicule, après un état des lieux rapide effectué ensemble.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Puis-je louer pour une seule journée ? <span class="chev">▾</span></button>
+      <div class="faq-a"><p>Oui, la location à la journée est possible pour nos deux véhicules. Des tarifs dégressifs s'appliquent dès 3 jours de location.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Que se passe-t-il en cas de retard ? <span class="chev">▾</span></button>
+      <div class="faq-a"><p>Prévenez-nous simplement par téléphone ou WhatsApp. Un retard important pourra être facturé au prorata de la journée entamée.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Le véhicule est-il assuré ? <span class="chev">▾</span></button>
+      <div class="faq-a"><p>Oui, chaque location est couverte par une assurance adaptée. Les détails et la franchise vous sont présentés avant la signature du contrat.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="sec-head">
+    <span class="badge">Réservation</span>
+    <h2>Contactez-nous</h2>
+    <p>Réponse rapide, 7j/7. Choisissez le moyen qui vous convient.</p>
+  </div>
+  <div class="contact-wrap">
+
+    <div class="contact-card">
+      <h3>Réservation directe</h3>
+      <p>Le plus rapide : appelez-nous ou écrivez-nous sur WhatsApp.</p>
+      <div class="quick-btns">
+        <a class="btn btn-primary" id="btn-tel" href="#">📞 Appeler</a>
+        <a class="btn btn-wa" id="btn-wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
+        <a class="btn btn-ghost" id="btn-mail" href="#">✉️ Email</a>
+      </div>
+      <p class="quick-note">Disponible 7j/7 — de 8h à 21h</p>
+    </div>
+
+    <div class="contact-card">
+      <h3>Demande de réservation</h3>
+      <p>Envoyez-nous votre demande, nous confirmons la disponibilité.</p>
+      <form id="resa-form">
+        <label for="f-nom">Nom complet</label>
+        <input id="f-nom" required placeholder="Votre nom">
+        <label for="f-tel">Téléphone</label>
+        <input id="f-tel" type="tel" required placeholder="06 12 34 56 78">
+        <label for="f-veh">Véhicule souhaité</label>
+        <select id="f-veh"></select>
+        <label for="f-dates">Dates souhaitées</label>
+        <input id="f-dates" required placeholder="Ex : du 15 au 18 juillet">
+        <label for="f-msg">Message (optionnel)</label>
+        <textarea id="f-msg" placeholder="Précisions, questions…"></textarea>
+        <button type="submit" class="btn btn-primary">Envoyer ma demande</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="logo" style="margin-bottom:10px">LB <span>Location</span></div>
+  <p id="footer-flotte"></p>
+  <p style="margin-top:6px">© 2026 LB Location. Tous droits réservés.</p>
+  <p style="margin-top:12px"><a href="#admin" id="admin-link" class="adm-footer-link">Espace administrateur</a></p>
+</footer>
+
+<a class="wa-float" id="wa-float" href="#" target="_blank" rel="noopener" title="Écrivez-nous sur WhatsApp">💬</a>
+
+<div class="lightbox" id="lightbox">
+  <div class="lb-inner">
+    <div class="lb-stage" id="lb-stage">
+      <button class="lb-close" id="lb-close">✕</button>
+      <button class="lb-arrow lb-prev" id="lb-prev">‹</button>
+      <button class="lb-arrow lb-next" id="lb-next">›</button>
+    </div>
+    <div class="lb-title" id="lb-title"></div>
+    <div class="lb-count" id="lb-count"></div>
+  </div>
+</div>
+
+<div class="cal-modal" id="admin-login">
+  <div class="cal-card adm-login-card">
+    <button class="cal-close" id="adm-login-close">✕</button>
+    <h3 class="adm-titre">🔐 Espace administrateur</h3>
+    <form id="adm-login-form">
+      <div id="adm-email-wrap" style="display:none">
+        <label for="adm-email">Email administrateur</label>
+        <input type="email" id="adm-email" placeholder="admin@exemple.fr" autocomplete="username">
+      </div>
+      <label for="adm-pass" style="margin-top:10px">Mot de passe</label>
+      <input type="password" id="adm-pass" placeholder="Mot de passe administrateur" autocomplete="current-password">
+      <p id="adm-pass-err" style="display:none;color:#e88;font-size:.85rem;margin-top:8px">Mot de passe incorrect</p>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:18px">Se connecter</button>
+    </form>
+  </div>
+</div>
+
+<div class="cal-modal" id="admin-panel">
+  <div class="cal-card admin-card" id="admin-card"></div>
+</div>
+
+<script id="site-data" type="application/json">{"config": {"tel": "+33600000000", "telAffiche": "06 00 00 00 00", "whatsapp": "33600000000", "email": "parzival95200@gmail.com", "motDePasse": "admin123", "serveur": {"url": "", "cle": ""}, "github": {"owner": "parzival952", "repo": "location-vehicules-e", "branche": "main"}}, "vehicules": [{"id": "clio", "nom": "Renault Clio 5 Esprit Alpine", "sousTitre": "Modèle 2025 — la citadine au look sportif", "tag": "Citadine · Esprit Alpine", "tagOr": true, "couleur": "#1e4f8f", "prix": 45, "specs": ["5 places", "Hybride E-Tech", "Boîte automatique", "Finition Esprit Alpine", "CarPlay / Android Auto"], "photos": [], "reservations": ["2026-07-14", "2026-07-15", "2026-07-16", "2026-07-25", "2026-07-26", "2026-08-03", "2026-08-04", "2026-08-05"]}, {"id": "troc", "nom": "Volkswagen T-Roc", "sousTitre": "Modèle 2025 — confort et polyvalence", "tag": "SUV Compact", "tagOr": false, "couleur": "#4a3f6b", "prix": 59, "specs": ["5 places", "Boîte automatique", "Grand coffre", "Climatisation", "Caméra de recul"], "photos": [], "reservations": ["2026-07-18", "2026-07-19", "2026-08-01", "2026-08-02", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13"]}]}</script>
+<script>
+/* =====================================================
+   DONNÉES DU SITE
+   Tout le contenu (véhicules, photos, prix, réservations,
+   coordonnées) vit dans le bloc JSON #site-data.
+   L'espace admin (lien en bas de page) permet de tout
+   modifier puis de télécharger le site mis à jour.
+   ===================================================== */
+var SITE = JSON.parse(document.getElementById('site-data').textContent);
+SITE.config.serveur = SITE.config.serveur || { url: '', cle: '' };
+SITE.config.github = SITE.config.github || { owner: '', repo: '', branche: 'main' };
+/* Photo de la page AVANT tout rendu dynamique : sert de gabarit à l'export */
+var SOURCE_SNAPSHOT = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+function vehById(id){
+  for(var i = 0; i < SITE.vehicules.length; i++){
+    if(SITE.vehicules[i].id === id) return SITE.vehicules[i];
+  }
+  return null;
+}
+
+/* =====================================================
+   MODE SERVEUR (Supabase)
+   Quand config.serveur.url et .cle sont renseignés :
+   - le site charge les données depuis le serveur au démarrage
+   - l'admin se connecte avec son email + mot de passe Supabase
+   - le bouton « Publier » met à jour le site pour tous les visiteurs
+   ===================================================== */
+var SESSION_TOKEN = null;
+function serveurActif(){
+  return !!(SITE.config.serveur && SITE.config.serveur.url && SITE.config.serveur.cle);
+}
+function githubActif(){
+  return !!(SITE.config.github && SITE.config.github.owner && SITE.config.github.repo);
+}
+function githubApi(chemin){
+  return 'https://api.github.com/repos/' + SITE.config.github.owner + '/' + SITE.config.github.repo + chemin;
+}
+function urlServeur(chemin){
+  return SITE.config.serveur.url.replace(/\/+$/, '') + chemin;
+}
+function chargerDepuisServeur(){
+  if(githubActif()){
+    /* Sur GitHub Pages, les données vivent dans data.json à côté du site */
+    fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){
+        if(d && d.vehicules && d.vehicules.length){
+          var gh = SITE.config.github, sv = SITE.config.serveur;
+          SITE = d;
+          SITE.config.github = gh;
+          SITE.config.serveur = sv;
+          renderAll();
+        }
+      })
+      .catch(function(){ /* fichier ouvert hors ligne : données embarquées */ });
+    return;
+  }
+  if(!serveurActif()) return;
+  fetch(urlServeur('/rest/v1/contenu?id=eq.1&select=data'), {
+    headers: { apikey: SITE.config.serveur.cle, Authorization: 'Bearer ' + SITE.config.serveur.cle }
+  }).then(function(r){ return r.json(); }).then(function(rows){
+    if(rows && rows[0] && rows[0].data && rows[0].data.vehicules && rows[0].data.vehicules.length){
+      var connexion = SITE.config.serveur; /* la connexion du fichier reste prioritaire */
+      SITE = rows[0].data;
+      SITE.config.serveur = connexion;
+      renderAll();
+    }
+  }).catch(function(){ /* serveur injoignable : on garde les données embarquées dans le fichier */ });
+}
+function publierEnLigne(statusEl){
+  statusEl.textContent = '⏳ Publication en cours…';
+  fetch(urlServeur('/rest/v1/contenu?id=eq.1'), {
+    method: 'PATCH',
+    headers: {
+      apikey: SITE.config.serveur.cle,
+      Authorization: 'Bearer ' + (SESSION_TOKEN || SITE.config.serveur.cle),
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal'
+    },
+    body: JSON.stringify({ data: SITE })
+  }).then(function(r){
+    statusEl.textContent = r.ok
+      ? '✅ Publié ! Tous les visiteurs voient maintenant la nouvelle version.'
+      : '❌ Erreur ' + r.status + ' — reconnectez-vous à l\'admin et réessayez.';
+  }).catch(function(){
+    statusEl.textContent = '❌ Impossible de joindre le serveur. Vérifiez votre connexion internet.';
+  });
+}
+
+function publierGitHub(statusEl){
+  var g = SITE.config.github;
+  var branche = g.branche || 'main';
+  statusEl.textContent = '⏳ Publication en cours…';
+  var headers = { Authorization: 'Bearer ' + SESSION_TOKEN, Accept: 'application/vnd.github+json' };
+  /* le sha actuel de data.json (via l'API "trees", fiable même pour les gros fichiers) */
+  fetch(githubApi('/git/trees/' + branche), { headers: headers })
+    .then(function(r){ return r.ok ? r.json() : { tree: [] }; })
+    .then(function(tree){
+      var fichier = (tree.tree || []).filter(function(t){ return t.path === 'data.json'; })[0];
+      var contenu = JSON.stringify(SITE, null, 2);
+      var b64 = btoa(unescape(encodeURIComponent(contenu)));
+      var body = { message: 'Mise à jour du site depuis l\'espace admin', content: b64, branch: branche };
+      if(fichier && fichier.sha) body.sha = fichier.sha;
+      return fetch(githubApi('/contents/data.json'), {
+        method: 'PUT',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, headers),
+        body: JSON.stringify(body)
+      });
+    })
+    .then(function(r){
+      statusEl.textContent = r.ok
+        ? '✅ Publié ! Les changements seront visibles par tous dans environ 1 minute.'
+        : '❌ Erreur ' + r.status + ' — vérifiez que votre jeton est valide et réessayez.';
+    })
+    .catch(function(){ statusEl.textContent = '❌ Impossible de joindre GitHub. Vérifiez votre connexion.'; });
+}
+
+/* ---------- Silhouette SVG (véhicule sans photo) ---------- */
+function carSvg(couleur){
+  return '<svg viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M35 82 C35 70 45 62 60 58 L85 42 C95 34 110 30 135 30 L185 30 C210 30 228 38 245 52 L275 60 C290 64 296 70 296 80 L296 86 C296 90 292 92 288 92 L270 92 A22 22 0 0 0 226 92 L110 92 A22 22 0 0 0 66 92 L42 92 C37 92 35 88 35 82 Z" fill="' + couleur + '"/>' +
+    '<path d="M95 44 L130 34 L130 56 L88 56 Z" fill="#0b0d12" opacity=".85"/>' +
+    '<path d="M140 34 L182 34 C198 34 210 40 222 50 L226 56 L140 56 Z" fill="#0b0d12" opacity=".85"/>' +
+    '<circle cx="88" cy="92" r="15" fill="#0b0d12"/><circle cx="88" cy="92" r="7" fill="#e8c15a"/>' +
+    '<circle cx="248" cy="92" r="15" fill="#0b0d12"/><circle cx="248" cy="92" r="7" fill="#e8c15a"/>' +
+    '<rect x="278" y="66" width="12" height="5" rx="2" fill="#ffd9a0"/></svg>';
+}
+
+/* =====================================================
+   RENDU DU SITE À PARTIR DES DONNÉES
+   ===================================================== */
+function renderFleet(){
+  var fleet = document.getElementById('fleet');
+  fleet.innerHTML = '';
+  SITE.vehicules.forEach(function(v){
+    var art = document.createElement('article');
+    art.className = 'car reveal visible';
+
+    var vis = document.createElement('div');
+    vis.className = 'car-visual';
+    vis.style.background = 'linear-gradient(140deg,' + (v.couleur || '#31405e') + ',#0e1420 70%)';
+
+    var tag = document.createElement('span');
+    tag.className = 'tag' + (v.tagOr ? ' gold' : '');
+    tag.textContent = v.tag || 'Voiture';
+    vis.appendChild(tag);
+
+    var gal = document.createElement('button');
+    gal.className = 'gal-btn';
+    gal.dataset.veh = v.id;
+    gal.textContent = '📷 Galerie';
+    vis.appendChild(gal);
+
+    if(v.photos && v.photos.length){
+      var img = document.createElement('img');
+      img.src = v.photos[0];
+      img.alt = v.nom;
+      vis.insertBefore(img, vis.firstChild);
+    } else {
+      var holder = document.createElement('div');
+      holder.style.cssText = 'width:78%;filter:drop-shadow(0 14px 18px rgba(0,0,0,.45))';
+      holder.innerHTML = carSvg(lightenColor(v.couleur || '#31405e'));
+      vis.appendChild(holder);
+    }
+    art.appendChild(vis);
+
+    var body = document.createElement('div');
+    body.className = 'car-body';
+
+    var h3 = document.createElement('h3');
+    h3.textContent = v.nom;
+    body.appendChild(h3);
+
+    var year = document.createElement('div');
+    year.className = 'year';
+    year.textContent = v.sousTitre || '';
+    body.appendChild(year);
+
+    var ul = document.createElement('ul');
+    ul.className = 'specs';
+    (v.specs || []).forEach(function(s){
+      var li = document.createElement('li');
+      li.textContent = s;
+      ul.appendChild(li);
+    });
+    body.appendChild(ul);
+
+    var dispo = document.createElement('button');
+    dispo.className = 'dispo-btn';
+    dispo.dataset.veh = v.id;
+    dispo.textContent = '📅 Voir les disponibilités';
+    body.appendChild(dispo);
+
+    var row = document.createElement('div');
+    row.className = 'price-row';
+    var price = document.createElement('div');
+    price.className = 'price';
+    var b = document.createElement('b');
+    b.textContent = v.prix + '€';
+    price.appendChild(b);
+    price.appendChild(document.createTextNode(' '));
+    var sp = document.createElement('span');
+    sp.textContent = '/ jour';
+    price.appendChild(sp);
+    row.appendChild(price);
+    var cta = document.createElement('a');
+    cta.href = '#contact';
+    cta.className = 'btn btn-primary';
+    cta.textContent = 'Réserver';
+    row.appendChild(cta);
+    body.appendChild(row);
+
+    art.appendChild(body);
+    fleet.appendChild(art);
+  });
+}
+
+function lightenColor(hex){
+  /* éclaircit légèrement la couleur pour la silhouette */
+  var n = parseInt(hex.slice(1), 16);
+  var r = Math.min(255, (n >> 16) + 24), g = Math.min(255, ((n >> 8) & 255) + 24), b = Math.min(255, (n & 255) + 40);
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+function renderSelects(){
+  var sim = document.getElementById('sim-veh');
+  var form = document.getElementById('f-veh');
+  sim.innerHTML = '';
+  form.innerHTML = '';
+  SITE.vehicules.forEach(function(v){
+    var o1 = document.createElement('option');
+    o1.value = v.prix;
+    o1.dataset.name = v.nom;
+    o1.textContent = v.nom + ' — ' + v.prix + '€/j';
+    sim.appendChild(o1);
+    var o2 = document.createElement('option');
+    o2.textContent = v.nom + ' — ' + v.prix + '€/jour';
+    form.appendChild(o2);
+  });
+}
+
+function renderStats(){
+  var n = SITE.vehicules.length;
+  document.getElementById('stat-count').textContent = n;
+  if(n){
+    var min = Math.min.apply(null, SITE.vehicules.map(function(v){ return v.prix; }));
+    document.getElementById('stat-min').textContent = 'Dès ' + min + '€';
+  }
+}
+
+function renderContact(){
+  var c = SITE.config;
+  var tel = document.getElementById('btn-tel');
+  tel.href = 'tel:' + c.tel;
+  tel.textContent = '📞 Appeler — ' + c.telAffiche;
+  var waMsg = encodeURIComponent('Bonjour, je souhaite louer un véhicule');
+  document.getElementById('btn-wa').href = 'https://wa.me/' + c.whatsapp + '?text=' + waMsg;
+  document.getElementById('wa-float').href = 'https://wa.me/' + c.whatsapp + '?text=' + waMsg;
+  var mail = document.getElementById('btn-mail');
+  mail.href = 'mailto:' + c.email + '?subject=' + encodeURIComponent('Demande de location');
+  mail.textContent = '✉️ ' + c.email;
+  document.getElementById('footer-flotte').textContent =
+    'Location de véhicules entre particuliers — ' + SITE.vehicules.map(function(v){ return v.nom; }).join(' · ');
+}
+
+function renderAll(){
+  renderFleet();
+  renderSelects();
+  renderStats();
+  renderContact();
+  initSpotlight();
+}
+
+/* =====================================================
+   EFFETS VISUELS
+   ===================================================== */
+document.querySelectorAll('.cond, .avis, .faq-item, .sim, .sec-head, .contact-card').forEach(function(el){
+  el.classList.add('reveal');
+});
+var obs = new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if(en.isIntersecting){ en.target.classList.add('visible'); obs.unobserve(en.target); }
+  });
+}, {threshold:.12});
+
+function initSpotlight(){
+  document.querySelectorAll('#fleet .car').forEach(function(card){
+    card.onmousemove = function(e){
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    };
+  });
+}
+
+var nav = document.querySelector('nav');
+window.addEventListener('scroll', function(){
+  nav.classList.toggle('scrolled', window.scrollY > 10);
+});
+
+/* ----- FAQ accordéon ----- */
+document.querySelectorAll('.faq-q').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var item = btn.parentElement;
+    var answer = item.querySelector('.faq-a');
+    var open = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function(o){
+      o.classList.remove('open');
+      o.querySelector('.faq-a').style.maxHeight = null;
+    });
+    if(!open){
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  });
+});
+
+/* =====================================================
+   SIMULATEUR DE PRIX
+   ===================================================== */
+function calcSim(){
+  var sel = document.getElementById('sim-veh');
+  if(!sel.options.length) return;
+  var prix = parseFloat(sel.value);
+  var nom = sel.options[sel.selectedIndex].dataset.name;
+  var d1 = document.getElementById('sim-debut').value;
+  var d2 = document.getElementById('sim-fin').value;
+  var totalEl = document.getElementById('sim-total');
+  var detailEl = document.getElementById('sim-detail');
+  var promoEl = document.getElementById('sim-promo');
+  if(!d1 || !d2){ totalEl.textContent='—'; detailEl.textContent='Choisissez un véhicule et vos dates'; promoEl.style.display='none'; return; }
+  var jours = Math.round((new Date(d2) - new Date(d1)) / 86400000);
+  if(jours < 1){ totalEl.textContent='—'; detailEl.textContent='La date de retour doit être après la date de départ'; promoEl.style.display='none'; return; }
+  var remise = jours >= 7 ? 0.20 : (jours >= 3 ? 0.10 : 0);
+  var total = Math.round(prix * jours * (1 - remise));
+  totalEl.textContent = total.toLocaleString('fr-FR') + ' €';
+  detailEl.textContent = nom + ' · ' + jours + ' jour' + (jours>1?'s':'') + ' × ' + prix + '€';
+  if(remise > 0){
+    promoEl.style.display = 'inline-block';
+    promoEl.textContent = '🎉 Remise de ' + (remise*100) + '% appliquée — vous économisez ' + Math.round(prix*jours*remise).toLocaleString('fr-FR') + ' €';
+  } else {
+    promoEl.style.display = 'none';
+  }
+}
+['sim-veh','sim-debut','sim-fin'].forEach(function(id){
+  document.getElementById(id).addEventListener('change', calcSim);
+});
+var todayIso = new Date().toISOString().split('T')[0];
+document.getElementById('sim-debut').min = todayIso;
+document.getElementById('sim-fin').min = todayIso;
+
+/* =====================================================
+   CALENDRIER DE DISPONIBILITÉS (fenêtre sur la fiche)
+   ===================================================== */
+var calVeh = null;
+var calNow = new Date(); calNow.setHours(0,0,0,0);
+var calView = new Date(calNow.getFullYear(), calNow.getMonth(), 1);
+var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+var DOW = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
+function iso(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function renderCal(){
+  var grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  document.getElementById('cal-month').textContent = MOIS[calView.getMonth()] + ' ' + calView.getFullYear();
+  DOW.forEach(function(d){
+    var el = document.createElement('div'); el.className = 'cal-dow'; el.textContent = d; grid.appendChild(el);
+  });
+  var first = new Date(calView.getFullYear(), calView.getMonth(), 1);
+  var offset = (first.getDay() + 6) % 7;
+  for(var i=0;i<offset;i++){
+    var e = document.createElement('div'); e.className = 'cal-day empty'; grid.appendChild(e);
+  }
+  var nbJours = new Date(calView.getFullYear(), calView.getMonth()+1, 0).getDate();
+  var v = vehById(calVeh);
+  var booked = (v && v.reservations) || [];
+  for(var j=1;j<=nbJours;j++){
+    var d = new Date(calView.getFullYear(), calView.getMonth(), j);
+    var cell = document.createElement('div');
+    cell.textContent = j;
+    var cls = 'cal-day ';
+    if(d < calNow){ cls += 'past'; }
+    else if(booked.indexOf(iso(d)) !== -1){ cls += 'booked'; cell.title = 'Réservé'; }
+    else { cls += 'free'; cell.title = 'Disponible'; }
+    cell.className = cls;
+    grid.appendChild(cell);
+  }
+  document.getElementById('cal-prev').disabled =
+    calView.getFullYear() === calNow.getFullYear() && calView.getMonth() === calNow.getMonth();
+}
+document.getElementById('cal-prev').addEventListener('click', function(){
+  calView = new Date(calView.getFullYear(), calView.getMonth()-1, 1); renderCal();
+});
+document.getElementById('cal-next').addEventListener('click', function(){
+  calView = new Date(calView.getFullYear(), calView.getMonth()+1, 1); renderCal();
+});
+
+var calModal = document.getElementById('cal-modal');
+function openCal(vehId){
+  calVeh = vehId;
+  calView = new Date(calNow.getFullYear(), calNow.getMonth(), 1);
+  var v = vehById(vehId);
+  document.getElementById('cal-veh-title').textContent = v ? v.nom : '';
+  renderCal();
+  calModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCal(){
+  calModal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('cal-close').addEventListener('click', closeCal);
+document.getElementById('cal-cta').addEventListener('click', closeCal);
+calModal.addEventListener('click', function(e){ if(e.target === calModal) closeCal(); });
+
+/* =====================================================
+   GALERIE PHOTOS (lightbox)
+   ===================================================== */
+var lbVeh = null, lbIndex = 0;
+var lightbox = document.getElementById('lightbox');
+
+function lbSlides(vehId){
+  var v = vehById(vehId);
+  if(v && v.photos && v.photos.length) return v.photos;
+  return [null, null, null];
+}
+function renderLb(){
+  var stage = document.getElementById('lb-stage');
+  stage.querySelectorAll('img, .lb-ph').forEach(function(n){ n.remove(); });
+  var v = vehById(lbVeh);
+  var slides = lbSlides(lbVeh);
+  var s = slides[lbIndex];
+  if(s){
+    var img = document.createElement('img'); img.src = s; img.alt = v ? v.nom : '';
+    stage.appendChild(img);
+  } else {
+    var ph = document.createElement('div'); ph.className = 'lb-ph';
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'width:46%';
+    wrap.innerHTML = carSvg(lightenColor((v && v.couleur) || '#31405e'));
+    ph.appendChild(wrap);
+    var txt = document.createElement('div');
+    txt.innerHTML = '<span class="cam">📷</span><br>Photo ' + (lbIndex+1) + ' — bientôt disponible';
+    ph.appendChild(txt);
+    stage.appendChild(ph);
+  }
+  document.getElementById('lb-title').textContent = v ? v.nom : '';
+  document.getElementById('lb-count').textContent = (lbIndex+1) + ' / ' + slides.length;
+}
+document.getElementById('lb-prev').addEventListener('click', function(){
+  var n = lbSlides(lbVeh).length; lbIndex = (lbIndex - 1 + n) % n; renderLb();
+});
+document.getElementById('lb-next').addEventListener('click', function(){
+  var n = lbSlides(lbVeh).length; lbIndex = (lbIndex + 1) % n; renderLb();
+});
+document.getElementById('lb-close').addEventListener('click', function(){ lightbox.classList.remove('open'); });
+lightbox.addEventListener('click', function(e){ if(e.target === lightbox) lightbox.classList.remove('open'); });
+
+/* Boutons dynamiques des fiches (délégation d'événements) */
+document.addEventListener('click', function(e){
+  var g = e.target.closest('.gal-btn');
+  if(g){
+    e.stopPropagation();
+    lbVeh = g.dataset.veh; lbIndex = 0;
+    lightbox.classList.add('open');
+    renderLb();
+    return;
+  }
+  var d = e.target.closest('.dispo-btn');
+  if(d){ openCal(d.dataset.veh); }
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    lightbox.classList.remove('open');
+    closeCal();
+    fermerAdmin();
+  }
+});
+
+/* =====================================================
+   FORMULAIRE DE RÉSERVATION
+   ===================================================== */
+document.getElementById('resa-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var nom = document.getElementById('f-nom').value;
+  var tel = document.getElementById('f-tel').value;
+  var vehSel = document.getElementById('f-veh');
+  var veh = vehSel.options.length ? vehSel.options[vehSel.selectedIndex].textContent : '';
+  var dates = document.getElementById('f-dates').value;
+  var msg = document.getElementById('f-msg').value;
+  var body = 'Nom : ' + nom + '\n' +
+             'Téléphone : ' + tel + '\n' +
+             'Véhicule : ' + veh + '\n' +
+             'Dates : ' + dates + '\n\n' +
+             'Message : ' + msg;
+  window.location.href = 'mailto:' + SITE.config.email
+    + '?subject=' + encodeURIComponent('Demande de location — ' + veh)
+    + '&body=' + encodeURIComponent(body);
+});
+
+/* =====================================================
+   ESPACE ADMINISTRATEUR
+   ===================================================== */
+var adminLogin = document.getElementById('admin-login');
+var adminPanel = document.getElementById('admin-panel');
+
+function ouvrirLogin(){
+  document.getElementById('adm-email-wrap').style.display = (serveurActif() && !githubActif()) ? 'block' : 'none';
+  var lbl = document.querySelector('label[for="adm-pass"]');
+  var inp = document.getElementById('adm-pass');
+  if(githubActif()){
+    lbl.textContent = 'Jeton d\'accès GitHub';
+    inp.placeholder = 'ghp_… ou github_pat_…';
+  } else {
+    lbl.textContent = 'Mot de passe';
+    inp.placeholder = 'Mot de passe administrateur';
+  }
+  adminLogin.classList.add('open');
+  document.getElementById('adm-pass').value = '';
+  document.getElementById('adm-pass-err').style.display = 'none';
+  setTimeout(function(){ document.getElementById('adm-pass').focus(); }, 100);
+}
+function fermerAdmin(){
+  adminLogin.classList.remove('open');
+  adminPanel.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('admin-link').addEventListener('click', function(e){
+  e.preventDefault();
+  ouvrirLogin();
+});
+document.getElementById('adm-login-close').addEventListener('click', fermerAdmin);
+adminLogin.addEventListener('click', function(e){ if(e.target === adminLogin) fermerAdmin(); });
+function loginRate(){ document.getElementById('adm-pass-err').style.display = 'block'; }
+document.getElementById('adm-login-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var pass = document.getElementById('adm-pass').value;
+  if(githubActif()){
+    /* le "mot de passe" est le jeton d'accès GitHub : on le vérifie sur le dépôt */
+    fetch(githubApi(''), { headers: { Authorization: 'Bearer ' + pass.trim(), Accept: 'application/vnd.github+json' } })
+      .then(function(r){
+        if(r.ok){
+          SESSION_TOKEN = pass.trim();
+          adminLogin.classList.remove('open');
+          ouvrirPanneau();
+        } else { loginRate(); }
+      })
+      .catch(loginRate);
+  } else if(serveurActif()){
+    fetch(urlServeur('/auth/v1/token?grant_type=password'), {
+      method: 'POST',
+      headers: { apikey: SITE.config.serveur.cle, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('adm-email').value, password: pass })
+    }).then(function(r){ return r.json(); }).then(function(res){
+      if(res.access_token){
+        SESSION_TOKEN = res.access_token;
+        adminLogin.classList.remove('open');
+        ouvrirPanneau();
+      } else { loginRate(); }
+    }).catch(loginRate);
+  } else if(pass === SITE.config.motDePasse){
+    adminLogin.classList.remove('open');
+    ouvrirPanneau();
+  } else { loginRate(); }
+});
+if(location.hash === '#admin'){ ouvrirLogin(); }
+
+function ouvrirPanneau(){
+  construireAdmin();
+  adminPanel.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+adminPanel.addEventListener('click', function(e){ if(e.target === adminPanel) fermerAdmin(); });
+
+/* ---- Construction du panneau ---- */
+function champ(labelTxt, value, onInput, type){
+  var w = document.createElement('div');
+  w.className = 'adm-field';
+  var l = document.createElement('label');
+  l.textContent = labelTxt;
+  w.appendChild(l);
+  var inp = document.createElement('input');
+  inp.type = type || 'text';
+  inp.value = value;
+  inp.addEventListener('input', function(){ onInput(inp.value); renderAll(); });
+  w.appendChild(inp);
+  return w;
+}
+
+function construireAdmin(){
+  var card = document.getElementById('admin-card');
+  card.innerHTML = '';
+
+  var close = document.createElement('button');
+  close.className = 'cal-close';
+  close.textContent = '✕';
+  close.addEventListener('click', fermerAdmin);
+  card.appendChild(close);
+
+  var titre = document.createElement('h3');
+  titre.className = 'adm-titre';
+  titre.textContent = '🔧 Espace administrateur';
+  card.appendChild(titre);
+
+  var note = document.createElement('p');
+  note.className = 'adm-note';
+  note.textContent = githubActif()
+    ? '🟢 Connecté à GitHub. Modifiez, puis cliquez sur « Publier » : les changements sont en ligne pour tous en ~1 minute.'
+    : (serveurActif()
+      ? '🟢 Connecté au serveur. Modifiez, puis cliquez sur « Publier » : les visiteurs verront les changements immédiatement.'
+      : 'Les changements s\'appliquent immédiatement en aperçu. Pour les rendre définitifs, téléchargez le site mis à jour et re-publiez-le.');
+  card.appendChild(note);
+
+  /* --- Coordonnées --- */
+  var secC = document.createElement('div');
+  secC.className = 'adm-veh';
+  var hC = document.createElement('h4');
+  hC.textContent = '📞 Coordonnées & accès';
+  secC.appendChild(hC);
+  secC.appendChild(champ('Téléphone affiché', SITE.config.telAffiche, function(v){
+    SITE.config.telAffiche = v;
+    SITE.config.tel = '+33' + v.replace(/\D/g,'').replace(/^0/,'');
+  }));
+  secC.appendChild(champ('WhatsApp (format international, ex : 33612345678)', SITE.config.whatsapp, function(v){ SITE.config.whatsapp = v.replace(/\D/g,''); }));
+  secC.appendChild(champ('Email', SITE.config.email, function(v){ SITE.config.email = v; }));
+  secC.appendChild(champ('Mot de passe admin (mode fichier, sans serveur)', SITE.config.motDePasse, function(v){ SITE.config.motDePasse = v; }));
+  secC.appendChild(champ('Serveur — URL Supabase (optionnel)', SITE.config.serveur.url, function(v){ SITE.config.serveur.url = v.trim(); }));
+  secC.appendChild(champ('Serveur — clé publique « anon » (optionnel)', SITE.config.serveur.cle, function(v){ SITE.config.serveur.cle = v.trim(); }));
+  card.appendChild(secC);
+
+  /* --- Véhicules --- */
+  SITE.vehicules.forEach(function(v, idx){
+    card.appendChild(blocVehicule(v, idx));
+  });
+
+  var add = document.createElement('button');
+  add.className = 'btn btn-primary adm-add';
+  add.textContent = '➕ Ajouter un véhicule';
+  add.addEventListener('click', function(){
+    SITE.vehicules.push({
+      id: 'veh' + Date.now(),
+      nom: 'Nouveau véhicule',
+      sousTitre: 'Modèle — description courte',
+      tag: 'Voiture',
+      tagOr: false,
+      couleur: '#31405e',
+      prix: 50,
+      specs: ['5 places', 'Climatisation'],
+      photos: [],
+      reservations: []
+    });
+    renderAll();
+    construireAdmin();
+    card.scrollTop = card.scrollHeight;
+  });
+  card.appendChild(add);
+
+  /* --- Publication en ligne --- */
+  if(githubActif() || serveurActif()){
+    var pub = document.createElement('button');
+    pub.className = 'btn adm-export';
+    pub.textContent = '📤 Publier les changements en ligne';
+    var pubStatus = document.createElement('p');
+    pubStatus.className = 'adm-note';
+    pub.addEventListener('click', function(){
+      if(githubActif()){ publierGitHub(pubStatus); } else { publierEnLigne(pubStatus); }
+    });
+    card.appendChild(pub);
+    card.appendChild(pubStatus);
+  }
+
+  /* --- Export --- */
+  var exp = document.createElement('button');
+  exp.className = 'btn adm-export';
+  var enLigne = githubActif() || serveurActif();
+  exp.textContent = enLigne ? '⬇️ Télécharger une sauvegarde du site' : '⬇️ Télécharger le site mis à jour';
+  if(enLigne){ exp.className = 'btn btn-ghost'; exp.style.width = '100%'; exp.style.marginTop = '10px'; }
+  exp.addEventListener('click', exporterSite);
+  card.appendChild(exp);
+
+  var expNote = document.createElement('p');
+  expNote.className = 'adm-note';
+  expNote.textContent = 'Le fichier téléchargé remplace votre fichier actuel (chez votre hébergeur ou sur votre ordinateur).';
+  card.appendChild(expNote);
+}
+
+function blocVehicule(v, idx){
+  var sec = document.createElement('div');
+  sec.className = 'adm-veh';
+
+  var h = document.createElement('h4');
+  h.textContent = '🚗 ' + v.nom;
+  sec.appendChild(h);
+
+  sec.appendChild(champ('Nom', v.nom, function(val){ v.nom = val; h.textContent = '🚗 ' + val; }));
+  sec.appendChild(champ('Sous-titre', v.sousTitre, function(val){ v.sousTitre = val; }));
+  sec.appendChild(champ('Badge (ex : Citadine, SUV…)', v.tag, function(val){ v.tag = val; }));
+  sec.appendChild(champ('Prix par jour (€)', v.prix, function(val){ v.prix = parseFloat(val) || 0; }, 'number'));
+
+  /* Specs */
+  var fSpecs = document.createElement('div');
+  fSpecs.className = 'adm-field';
+  var lS = document.createElement('label');
+  lS.textContent = 'Caractéristiques (une par ligne)';
+  fSpecs.appendChild(lS);
+  var ta = document.createElement('textarea');
+  ta.rows = 4;
+  ta.value = (v.specs || []).join('\n');
+  ta.addEventListener('input', function(){
+    v.specs = ta.value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+    renderAll();
+  });
+  fSpecs.appendChild(ta);
+  sec.appendChild(fSpecs);
+
+  /* Photos */
+  var fPh = document.createElement('div');
+  fPh.className = 'adm-field';
+  var lP = document.createElement('label');
+  lP.textContent = 'Photos (la 1re s\'affiche sur la fiche)';
+  fPh.appendChild(lP);
+  var thumbs = document.createElement('div');
+  thumbs.className = 'adm-thumbs';
+  function majThumbs(){
+    thumbs.innerHTML = '';
+    (v.photos || []).forEach(function(p, i){
+      var t = document.createElement('div');
+      t.className = 'adm-thumb';
+      var im = document.createElement('img');
+      im.src = p;
+      t.appendChild(im);
+      var x = document.createElement('button');
+      x.textContent = '✕';
+      x.title = 'Supprimer cette photo';
+      x.addEventListener('click', function(){
+        v.photos.splice(i, 1);
+        majThumbs();
+        renderAll();
+      });
+      t.appendChild(x);
+      thumbs.appendChild(t);
+    });
+  }
+  majThumbs();
+  fPh.appendChild(thumbs);
+  var file = document.createElement('input');
+  file.type = 'file';
+  file.accept = 'image/*';
+  file.multiple = true;
+  file.addEventListener('change', function(){
+    Array.prototype.forEach.call(file.files, function(f){
+      var reader = new FileReader();
+      reader.onload = function(){
+        compresserImage(reader.result, function(dataUrl){
+          v.photos = v.photos || [];
+          v.photos.push(dataUrl);
+          majThumbs();
+          renderAll();
+        });
+      };
+      reader.readAsDataURL(f);
+    });
+    file.value = '';
+  });
+  fPh.appendChild(file);
+  sec.appendChild(fPh);
+
+  /* Réservations */
+  var fR = document.createElement('div');
+  fR.className = 'adm-field';
+  var lR = document.createElement('label');
+  lR.textContent = 'Jours réservés (affichés en rouge dans le calendrier)';
+  fR.appendChild(lR);
+  var chips = document.createElement('div');
+  chips.className = 'adm-chips';
+  function majChips(){
+    chips.innerHTML = '';
+    (v.reservations || []).sort().forEach(function(dt, i){
+      var c = document.createElement('span');
+      c.className = 'adm-chip';
+      c.textContent = dt.split('-').reverse().join('/');
+      var x = document.createElement('button');
+      x.textContent = '✕';
+      x.addEventListener('click', function(){
+        v.reservations.splice(i, 1);
+        majChips();
+      });
+      c.appendChild(x);
+      chips.appendChild(c);
+    });
+  }
+  majChips();
+  fR.appendChild(chips);
+  var rRow = document.createElement('div');
+  rRow.className = 'adm-row';
+  var dIn = document.createElement('input');
+  dIn.type = 'date';
+  var dIn2 = document.createElement('input');
+  dIn2.type = 'date';
+  dIn2.title = 'Fin (optionnel, pour une période)';
+  var dBtn = document.createElement('button');
+  dBtn.className = 'btn btn-ghost';
+  dBtn.textContent = 'Ajouter';
+  dBtn.addEventListener('click', function(){
+    if(!dIn.value) return;
+    v.reservations = v.reservations || [];
+    var start = new Date(dIn.value);
+    var end = dIn2.value ? new Date(dIn2.value) : start;
+    for(var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)){
+      var s = iso(d);
+      if(v.reservations.indexOf(s) === -1) v.reservations.push(s);
+    }
+    dIn.value = ''; dIn2.value = '';
+    majChips();
+  });
+  rRow.appendChild(dIn);
+  rRow.appendChild(dIn2);
+  rRow.appendChild(dBtn);
+  fR.appendChild(rRow);
+  sec.appendChild(fR);
+
+  /* Supprimer */
+  var del = document.createElement('button');
+  del.className = 'adm-del';
+  del.textContent = '🗑 Supprimer ce véhicule';
+  del.addEventListener('click', function(){
+    if(del.dataset.confirm){
+      SITE.vehicules.splice(idx, 1);
+      renderAll();
+      construireAdmin();
+    } else {
+      del.dataset.confirm = '1';
+      del.textContent = '⚠️ Cliquez encore pour confirmer la suppression';
+      setTimeout(function(){
+        delete del.dataset.confirm;
+        del.textContent = '🗑 Supprimer ce véhicule';
+      }, 3000);
+    }
+  });
+  sec.appendChild(del);
+
+  return sec;
+}
+
+/* Réduit une photo à 1200px de large max, en JPEG compressé */
+function compresserImage(dataUrl, cb){
+  var img = new Image();
+  img.onload = function(){
+    var scale = Math.min(1, 1200 / img.width);
+    var c = document.createElement('canvas');
+    c.width = Math.round(img.width * scale);
+    c.height = Math.round(img.height * scale);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    cb(c.toDataURL('image/jpeg', 0.82));
+  };
+  img.src = dataUrl;
+}
+
+/* ---- Export du site mis à jour ---- */
+function exporterSite(){
+  var json = JSON.stringify(SITE).replace(/<\//g, '<\\/');
+  var html = SOURCE_SNAPSHOT.replace(
+    /(<script id="site-data"[^>]*>)[\s\S]*?(<\/script>)/,
+    function(m, a, b){ return a + json + b; }
+  );
+  var blob = new Blob([html], {type: 'text/html'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'location-vehicules.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+/* =====================================================
+   DÉMARRAGE
+   ===================================================== */
+renderAll();
+chargerDepuisServeur();
+document.querySelectorAll('#fleet .car').forEach(function(el){ obs.observe(el); });
+document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){ obs.observe(el); });
+
+</script>
+
+</body>
+</html>
