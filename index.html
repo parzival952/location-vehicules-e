@@ -356,6 +356,18 @@
   .adm-footer-link{color:var(--muted);font-size:.8rem;text-decoration:none;border-bottom:1px dotted var(--muted)}
   .adm-footer-link:hover{color:var(--text)}
   input[type="file"]{padding:8px;font-size:.85rem}
+  .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+  .dash-tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .dash-alerte{border-color:rgba(232,168,60,.55);background:rgba(232,168,60,.07)}
+  .dash-num{font-size:1.5rem;font-weight:800;color:var(--text)}
+  .dash-lab{font-size:.74rem;color:var(--muted);margin-top:4px}
+  .dash-soustitre{font-size:.85rem;font-weight:700;margin:14px 0 8px}
+  .occ-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .occ-nom{flex:0 0 40%;font-size:.82rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .occ-track{flex:1;height:8px;border-radius:4px;background:var(--card);overflow:hidden;border:1px solid var(--line)}
+  .occ-fill{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .occ-pct{flex:0 0 38px;text-align:right;font-size:.8rem;color:var(--text)}
+  .dash-resa{font-size:.86rem;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:var(--card)}
   @media(max-width:840px){
     .nav-links a:not(.btn){display:none}
     .contact-wrap{grid-template-columns:1fr}
@@ -1386,6 +1398,78 @@ function construireAdmin(){
   secC.appendChild(champ('Serveur — URL Supabase (optionnel)', SITE.config.serveur.url, function(v){ SITE.config.serveur.url = v.trim(); }));
   secC.appendChild(champ('Serveur — clé publique « anon » (optionnel)', SITE.config.serveur.cle, function(v){ SITE.config.serveur.cle = v.trim(); }));
   card.appendChild(secC);
+
+  /* --- Tableau de bord (mode serveur) --- */
+  if(serveurActif() && SESSION_TOKEN){
+    var secD = document.createElement('div');
+    secD.className = 'adm-veh';
+    var hD = document.createElement('h4');
+    hD.textContent = '📊 Tableau de bord';
+    secD.appendChild(hD);
+    var corps = document.createElement('div');
+    corps.innerHTML = '<p class="adm-note">Chargement…</p>';
+    secD.appendChild(corps);
+    fetch(urlServeur('/rest/v1/reservations?select=*&order=debut.asc'), {
+      headers: { apikey: SITE.config.serveur.cle, Authorization: 'Bearer ' + SESSION_TOKEN }
+    }).then(function(r){ return r.json(); }).then(function(rows){
+      if(!Array.isArray(rows)) rows = [];
+      var auj = iso(calNow);
+      var annee = calNow.getFullYear(), mois = calNow.getMonth();
+      var nbJoursMois = new Date(annee, mois + 1, 0).getDate();
+      var attente = rows.filter(function(r){ return r.statut === 'attente'; });
+      var confirmees = rows.filter(function(r){ return r.statut === 'confirmee'; });
+      var aVenir = confirmees.filter(function(r){ return r.fin >= auj; });
+      var revenus = 0;
+      var occ = {};
+      SITE.vehicules.forEach(function(v){ occ[v.id] = {}; });
+      confirmees.forEach(function(r){
+        var v = vehById(r.vehicule);
+        for(var d = new Date(r.debut); d <= new Date(r.fin); d.setDate(d.getDate() + 1)){
+          if(d.getFullYear() === annee && d.getMonth() === mois){
+            if(v) revenus += v.prix;
+            if(occ[r.vehicule]) occ[r.vehicule][iso(d)] = 1;
+          }
+        }
+      });
+      SITE.vehicules.forEach(function(v){
+        (v.reservations || []).forEach(function(s){
+          var d = new Date(s);
+          if(d.getFullYear() === annee && d.getMonth() === mois) occ[v.id][s] = 1;
+        });
+      });
+      var totalOcc = 0;
+      var barres = '';
+      SITE.vehicules.forEach(function(v){
+        var n = Object.keys(occ[v.id] || {}).length;
+        totalOcc += n;
+        var pct = Math.round(100 * n / nbJoursMois);
+        barres += '<div class="occ-row"><span class="occ-nom">' + v.nom + '</span>' +
+          '<span class="occ-track"><span class="occ-fill" style="width:' + pct + '%"></span></span>' +
+          '<span class="occ-pct">' + pct + '%</span></div>';
+      });
+      var pctGlobal = SITE.vehicules.length ? Math.round(100 * totalOcc / (nbJoursMois * SITE.vehicules.length)) : 0;
+      var tuiles =
+        '<div class="dash-grid">' +
+        '<div class="dash-tile' + (attente.length ? ' dash-alerte' : '') + '"><div class="dash-num">' + attente.length + '</div><div class="dash-lab">🟠 Demande' + (attente.length > 1 ? 's' : '') + ' en attente</div></div>' +
+        '<div class="dash-tile"><div class="dash-num">' + aVenir.length + '</div><div class="dash-lab">📅 Location' + (aVenir.length > 1 ? 's' : '') + ' à venir</div></div>' +
+        '<div class="dash-tile"><div class="dash-num">' + revenus.toLocaleString('fr-FR') + ' €</div><div class="dash-lab">💶 Revenus confirmés — ' + MOIS[mois] + '</div></div>' +
+        '<div class="dash-tile"><div class="dash-num">' + pctGlobal + '%</div><div class="dash-lab">📈 Occupation — ' + MOIS[mois] + '</div></div>' +
+        '</div>';
+      var prochaines = '';
+      aVenir.slice(0, 5).forEach(function(r){
+        var v = vehById(r.vehicule);
+        prochaines += '<div class="dash-resa"><b>' + r.debut.split('-').reverse().join('/') + ' → ' + r.fin.split('-').reverse().join('/') + '</b> · ' +
+          (v ? v.nom : r.vehicule) + ' · <span style="color:var(--muted)">' + (r.nom || '') + ' — ' + (r.telephone || '') + '</span></div>';
+      });
+      corps.innerHTML = tuiles +
+        '<p class="dash-soustitre">Occupation de ' + MOIS[mois] + ' par véhicule</p>' + barres +
+        '<p class="dash-soustitre">Prochaines locations confirmées</p>' +
+        (prochaines || '<p class="adm-note" style="text-align:left;margin:0">Aucune location confirmée à venir.</p>');
+    }).catch(function(){
+      corps.innerHTML = '<p class="adm-note">❌ Impossible de charger le tableau de bord.</p>';
+    });
+    card.insertBefore(secD, secC);
+  }
 
   /* --- Demandes de réservation (mode serveur) --- */
   if(serveurActif() && SESSION_TOKEN){
