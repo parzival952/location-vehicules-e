@@ -311,6 +311,21 @@
     width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
     background:rgba(0,0,0,.55);color:#fff;font-size:1rem;cursor:pointer;
   }
+  /* ---------- OFFRES DU MOMENT ---------- */
+  #offres{padding:56px 6vw 0}
+  .offres-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;max-width:1000px;margin:0 auto}
+  .offre{
+    position:relative;display:flex;gap:16px;align-items:flex-start;
+    padding:22px 24px;border-radius:16px;overflow:hidden;
+    background:linear-gradient(135deg,rgba(232,193,90,.13),rgba(61,123,255,.07));
+    border:1px solid rgba(232,193,90,.4);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .offre:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+  .offre .ico{font-size:1.9rem;line-height:1}
+  .offre b{display:block;font-size:1.05rem;margin-bottom:4px}
+  .offre p{color:var(--muted);font-size:.89rem}
+  .badge-or{border-color:rgba(232,193,90,.5) !important;color:var(--gold) !important;background:rgba(232,193,90,.08) !important}
   /* ---------- ADMIN ---------- */
   .admin-card{width:min(680px,94vw)}
   .adm-login-card{width:min(400px,94vw)}
@@ -373,6 +388,13 @@
     <div class="stat"><b>7j/7</b><span>disponibilité</span></div>
   </div>
 </header>
+
+<section id="offres" style="display:none">
+  <div class="sec-head" style="margin-bottom:30px">
+    <span class="badge badge-or">🔥 Offre du moment</span>
+  </div>
+  <div class="offres-grid" id="offres-grid"></div>
+</section>
 
 <section id="vehicules">
   <div class="sec-head">
@@ -578,7 +600,7 @@
   <div class="cal-card admin-card" id="admin-card"></div>
 </div>
 
-<script id="site-data" type="application/json">{"config": {"tel": "+33600000000", "telAffiche": "06 00 00 00 00", "whatsapp": "33600000000", "email": "parzival95200@gmail.com", "motDePasse": "admin123", "serveur": {"url": "", "cle": ""}, "github": {"owner": "parzival952", "repo": "location-vehicules-e", "branche": "main"}}, "vehicules": [{"id": "clio", "nom": "Renault Clio 5 Esprit Alpine", "sousTitre": "Modèle 2025 — la citadine au look sportif", "tag": "Citadine · Esprit Alpine", "tagOr": true, "couleur": "#1e4f8f", "prix": 45, "specs": ["5 places", "Hybride E-Tech", "Boîte automatique", "Finition Esprit Alpine", "CarPlay / Android Auto"], "photos": [], "reservations": ["2026-07-14", "2026-07-15", "2026-07-16", "2026-07-25", "2026-07-26", "2026-08-03", "2026-08-04", "2026-08-05"]}, {"id": "troc", "nom": "Volkswagen T-Roc", "sousTitre": "Modèle 2025 — confort et polyvalence", "tag": "SUV Compact", "tagOr": false, "couleur": "#4a3f6b", "prix": 59, "specs": ["5 places", "Boîte automatique", "Grand coffre", "Climatisation", "Caméra de recul"], "photos": [], "reservations": ["2026-07-18", "2026-07-19", "2026-08-01", "2026-08-02", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13"]}]}</script>
+<script id="site-data" type="application/json">{"config":{"tel":"+33600000000","telAffiche":"06 00 00 00 00","whatsapp":"33600000000","email":"parzival95200@gmail.com","motDePasse":"admin123","serveur":{"url":"","cle":""},"github":{"owner":"parzival952","repo":"location-vehicules-e","branche":"main"}},"vehicules":[{"id":"clio","nom":"Renault Clio 5 Esprit Alpine","sousTitre":"Modèle 2025 — la citadine au look sportif","tag":"Citadine · Esprit Alpine","tagOr":true,"couleur":"#1e4f8f","prix":45,"specs":["5 places","Hybride E-Tech","Boîte automatique","Finition Esprit Alpine","CarPlay / Android Auto"],"photos":[],"reservations":["2026-07-14","2026-07-15","2026-07-16","2026-07-25","2026-07-26","2026-08-03","2026-08-04","2026-08-05"]},{"id":"troc","nom":"Volkswagen T-Roc","sousTitre":"Modèle 2025 — confort et polyvalence","tag":"SUV Compact","tagOr":false,"couleur":"#4a3f6b","prix":59,"specs":["5 places","Boîte automatique","Grand coffre","Climatisation","Caméra de recul"],"photos":[],"reservations":["2026-07-18","2026-07-19","2026-08-01","2026-08-02","2026-08-10","2026-08-11","2026-08-12","2026-08-13"]}],"offres":[{"emoji":"🎉","titre":"−10% sur votre première location","texte":"Nouveau client ? Profitez de 10% de remise sur votre première réservation."},{"emoji":"🏷️","titre":"Semaine maligne : −20% dès 7 jours","texte":"Partez plus longtemps pour moins cher : la remise s'applique automatiquement dès 7 jours."}]}</script>
 <script>
 /* =====================================================
    DONNÉES DU SITE
@@ -845,7 +867,33 @@ function renderContact(){
     'Location de véhicules entre particuliers — ' + SITE.vehicules.map(function(v){ return v.nom; }).join(' · ');
 }
 
+function renderOffres(){
+  var sec = document.getElementById('offres');
+  var grid = document.getElementById('offres-grid');
+  grid.innerHTML = '';
+  var offres = SITE.offres || [];
+  sec.style.display = offres.length ? 'block' : 'none';
+  offres.forEach(function(o){
+    var d = document.createElement('div');
+    d.className = 'offre';
+    var ico = document.createElement('div');
+    ico.className = 'ico';
+    ico.textContent = o.emoji || '🎁';
+    d.appendChild(ico);
+    var w = document.createElement('div');
+    var b = document.createElement('b');
+    b.textContent = o.titre || '';
+    w.appendChild(b);
+    var p = document.createElement('p');
+    p.textContent = o.texte || '';
+    w.appendChild(p);
+    d.appendChild(w);
+    grid.appendChild(d);
+  });
+}
+
 function renderAll(){
+  renderOffres();
   renderFleet();
   renderSelects();
   renderStats();
@@ -1212,6 +1260,52 @@ function construireAdmin(){
   secC.appendChild(champ('Serveur — URL Supabase (optionnel)', SITE.config.serveur.url, function(v){ SITE.config.serveur.url = v.trim(); }));
   secC.appendChild(champ('Serveur — clé publique « anon » (optionnel)', SITE.config.serveur.cle, function(v){ SITE.config.serveur.cle = v.trim(); }));
   card.appendChild(secC);
+
+  /* --- Offres du moment --- */
+  var secO = document.createElement('div');
+  secO.className = 'adm-veh';
+  var hO = document.createElement('h4');
+  hO.textContent = '🔥 Offres du moment';
+  secO.appendChild(hO);
+  var noteO = document.createElement('p');
+  noteO.className = 'adm-note';
+  noteO.style.textAlign = 'left';
+  noteO.textContent = 'Affichées en haut du site. Supprimez-les toutes pour masquer la section.';
+  secO.appendChild(noteO);
+  SITE.offres = SITE.offres || [];
+  var addO = document.createElement('button');
+  addO.className = 'btn btn-ghost';
+  addO.style.width = '100%';
+  addO.textContent = '➕ Ajouter une offre';
+  function majOffres(){
+    secO.querySelectorAll('.adm-offre').forEach(function(n){ n.remove(); });
+    SITE.offres.forEach(function(o, i){
+      var bloc = document.createElement('div');
+      bloc.className = 'adm-offre';
+      bloc.style.cssText = 'border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px';
+      bloc.appendChild(champ('Émoji', o.emoji || '🎁', function(v){ o.emoji = v; }));
+      bloc.appendChild(champ('Titre', o.titre || '', function(v){ o.titre = v; }));
+      bloc.appendChild(champ('Description', o.texte || '', function(v){ o.texte = v; }));
+      var del = document.createElement('button');
+      del.className = 'adm-del';
+      del.textContent = '🗑 Supprimer cette offre';
+      del.addEventListener('click', function(){
+        SITE.offres.splice(i, 1);
+        majOffres();
+        renderAll();
+      });
+      bloc.appendChild(del);
+      secO.insertBefore(bloc, addO);
+    });
+  }
+  addO.addEventListener('click', function(){
+    SITE.offres.push({ emoji: '🎁', titre: 'Nouvelle offre', texte: "Description de l'offre" });
+    majOffres();
+    renderAll();
+  });
+  secO.appendChild(addO);
+  majOffres();
+  card.appendChild(secO);
 
   /* --- Véhicules --- */
   SITE.vehicules.forEach(function(v, idx){
