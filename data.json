@@ -74,5 +74,17 @@
         "2026-08-13"
       ]
     }
+  ],
+  "offres": [
+    {
+      "emoji": "🎉",
+      "titre": "−10% sur votre première location",
+      "texte": "Nouveau client ? Profitez de 10% de remise sur votre première réservation."
+    },
+    {
+      "emoji": "🏷️",
+      "titre": "Semaine maligne : −20% dès 7 jours",
+      "texte": "Partez plus longtemps pour moins cher : la remise s'applique automatiquement dès 7 jours."
+    }
   ]
 }
