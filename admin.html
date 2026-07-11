@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Panneau d'administration — LB Location</title>
+<style>
+  :root{
+    --bg:#0b0d12; --bg2:#12151d; --card:#161a24; --line:rgba(255,255,255,.08);
+    --text:#eef1f6; --muted:#9aa3b2; --accent:#3d7bff; --accent2:#6ea8ff;
+    --gold:#e8c15a; --vert:#5fd68a; --orange:#eec27a; --rouge:#e88; --radius:18px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  a{color:var(--accent2)}
+  button{font-family:inherit}
+  .btn{display:inline-block;padding:11px 22px;border-radius:999px;font-weight:700;text-decoration:none;font-size:.9rem;cursor:pointer;border:none;transition:transform .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#2a5fd6);color:#fff;box-shadow:0 6px 24px rgba(61,123,255,.35)}
+  .btn-ghost{border:1px solid var(--line);color:var(--text);background:transparent}
+  .btn-vert{background:linear-gradient(135deg,#1fae54,#178a42);color:#fff}
+  .btn-wa{background:#1fae54;color:#fff}
+  .btn-danger{border:1px solid rgba(224,82,82,.4);background:rgba(224,82,82,.08);color:var(--rouge)}
+  label{display:block;font-size:.85rem;color:var(--muted);margin:12px 0 6px}
+  input,select,textarea{width:100%;padding:11px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--line);color:var(--text);font-family:inherit;font-size:.93rem;outline:none;transition:border-color .2s}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  /* ---------- LOGIN ---------- */
+  #ecran-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+    background:radial-gradient(900px 400px at 20% -10%, rgba(61,123,255,.18), transparent 60%),
+               radial-gradient(700px 380px at 85% 0%, rgba(232,193,90,.10), transparent 60%), var(--bg)}
+  .login-card{width:min(400px,94vw);background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:34px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+  .login-card h1{font-size:1.3rem;text-align:center;margin-bottom:4px}
+  .login-card .sous{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:18px}
+  .login-err{display:none;color:var(--rouge);font-size:.85rem;margin-top:10px;text-align:center}
+  /* ---------- APP ---------- */
+  #app{display:none;min-height:100vh}
+  aside{position:fixed;top:0;left:0;bottom:0;width:230px;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 14px;z-index:10}
+  .logo{font-size:1.15rem;font-weight:800;padding:0 10px 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
+  .logo span{color:var(--accent)}
+  .nav-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 12px;border-radius:12px;border:none;background:none;color:var(--muted);font-size:.92rem;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:2px}
+  .nav-item:hover{color:var(--text);background:rgba(255,255,255,.04)}
+  .nav-item.actif{background:linear-gradient(135deg,rgba(61,123,255,.18),rgba(61,123,255,.08));color:var(--accent2)}
+  .nav-item .pastille{margin-left:auto;background:rgba(232,168,60,.15);border:1px solid rgba(232,168,60,.4);color:var(--orange);font-size:.7rem;font-weight:800;padding:1px 8px;border-radius:999px}
+  aside .bas{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+  #btn-publier{width:100%;margin-bottom:8px;display:none}
+  main{margin-left:230px;padding:30px 34px;max-width:1150px}
+  .titre-page{font-size:1.4rem;font-weight:800;margin-bottom:4px}
+  .sous-page{color:var(--muted);font-size:.9rem;margin-bottom:24px}
+  .carte{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+  .carte h3{font-size:1.02rem;margin-bottom:14px}
+  /* tuiles */
+  .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+  .dash-tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .dash-alerte{border-color:rgba(232,168,60,.55);background:rgba(232,168,60,.07)}
+  .dash-num{font-size:1.55rem;font-weight:800;color:var(--text)}
+  .dash-lab{font-size:.74rem;color:var(--muted);margin-top:4px}
+  .dash-soustitre{font-size:.88rem;font-weight:700;margin:16px 0 10px}
+  /* barres */
+  .occ-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .occ-nom{flex:0 0 38%;font-size:.83rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .occ-track{flex:1;height:8px;border-radius:4px;background:var(--bg2);overflow:hidden;border:1px solid var(--line)}
+  .occ-fill{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .occ-pct{flex:0 0 86px;text-align:right;font-size:.8rem;color:var(--text)}
+  /* commandes */
+  .cmd-filtres{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .cmd-filtre{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--muted);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s}
+  .cmd-filtre.actif{background:linear-gradient(135deg,var(--accent),#2a5fd6);color:#fff;border-color:transparent}
+  .cmd-item{border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;background:var(--card)}
+  .cmd-tete{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .cmd-nom{font-weight:800;font-size:1.02rem}
+  .cmd-prix{font-weight:800;color:var(--gold)}
+  .cmd-badge{font-size:.76rem;font-weight:700;padding:4px 12px;border-radius:999px;border:1px solid}
+  .cmd-attente{color:var(--orange);border-color:rgba(232,168,60,.5);background:rgba(232,168,60,.1)}
+  .cmd-confirmee{color:var(--vert);border-color:rgba(31,174,84,.5);background:rgba(31,174,84,.1)}
+  .cmd-refusee{color:var(--rouge);border-color:rgba(224,82,82,.5);background:rgba(224,82,82,.1)}
+  .cmd-infos{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:6px 14px;font-size:.87rem;color:var(--muted)}
+  .cmd-infos b{color:var(--text);font-weight:600}
+  .cmd-infos a{text-decoration:none}
+  .cmd-msg{margin-top:8px;font-size:.85rem;color:var(--muted);font-style:italic;border-left:2px solid var(--line);padding-left:10px}
+  .adm-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .adm-row .btn{padding:8px 14px;font-size:.82rem}
+  .adm-row input{flex:1;min-width:120px}
+  .km-boite{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .km-boite input{max-width:150px}
+  /* tableaux clients */
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th{text-align:left;color:var(--muted);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:10px;border-bottom:1px solid var(--line)}
+  tr:last-child td{border-bottom:none}
+  /* voitures */
+  .veh-bloc{border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;background:var(--card)}
+  .adm-thumbs{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .adm-thumb{position:relative;width:110px;height:72px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+  .adm-thumb img{width:100%;height:100%;object-fit:cover}
+  .adm-thumb button{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,.7);color:#fff;font-size:.65rem;cursor:pointer}
+  .adm-chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .adm-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.35);color:var(--rouge);font-size:.82rem}
+  .adm-chip button{border:none;background:none;color:var(--rouge);cursor:pointer;font-size:.75rem}
+  .note{color:var(--muted);font-size:.84rem}
+  .vide-note{text-align:center;color:var(--muted);padding:36px 0}
+  .bandeau-modif{display:none;position:fixed;bottom:18px;left:250px;right:20px;max-width:600px;margin:0 auto;background:rgba(232,193,90,.12);border:1px solid rgba(232,193,90,.5);border-radius:14px;padding:12px 18px;backdrop-filter:blur(8px);z-index:50;display:none;align-items:center;gap:14px}
+  .recherche{margin-bottom:14px}
+  @media(max-width:860px){
+    aside{position:static;width:100%;flex-direction:row;flex-wrap:wrap;padding:12px;gap:4px}
+    .logo{border:none;padding:6px;margin:0}
+    .nav-item{width:auto;padding:8px 12px}
+    aside .bas{margin:0;border:none;padding:0;display:flex;gap:8px}
+    main{margin-left:0;padding:18px}
+    .bandeau-modif{left:20px}
+  }
+</style>
+</head>
+<body>
+
+<div id="ecran-login">
+  <div class="login-card">
+    <h1>🔐 Panneau d'administration</h1>
+    <p class="sous">LB Location — accès réservé</p>
+    <form id="form-login">
+      <label for="lg-email">Email</label>
+      <input id="lg-email" type="email" required autocomplete="username" placeholder="admin@exemple.fr">
+      <label for="lg-pass">Mot de passe</label>
+      <input id="lg-pass" type="password" required autocomplete="current-password" placeholder="Mot de passe">
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:20px">Se connecter</button>
+      <p class="login-err" id="lg-err">Identifiants incorrects. Réessayez.</p>
+    </form>
+  </div>
+</div>
+
+<div id="app">
+  <aside>
+    <div class="logo">LB <span>Location</span> · Admin</div>
+    <button class="nav-item" data-vue="dashboard">📊 Tableau de bord</button>
+    <button class="nav-item" data-vue="commandes">🗂 Commandes <span class="pastille" id="p-attente" style="display:none"></span></button>
+    <button class="nav-item" data-vue="clients">👥 Clients</button>
+    <button class="nav-item" data-vue="voitures">🚗 Voitures</button>
+    <button class="nav-item" data-vue="offres">🔥 Offres</button>
+    <button class="nav-item" data-vue="historique">🕐 Historique</button>
+    <button class="nav-item" data-vue="stats">📈 Statistiques</button>
+    <button class="nav-item" data-vue="reglages">⚙️ Réglages</button>
+    <div class="bas">
+      <button class="btn btn-vert" id="btn-publier">📤 Publier les modifications</button>
+      <a class="btn btn-ghost" style="width:100%;text-align:center;margin-bottom:8px" href="index.html" target="_blank">👁 Voir le site</a>
+      <button class="btn btn-ghost" style="width:100%" id="btn-deco">Se déconnecter</button>
+    </div>
+  </aside>
+  <main id="contenu"></main>
+</div>
+
+<script>
+/* =====================================================
+   CONFIGURATION
+   ===================================================== */
+var CFG = {
+  url: 'https://xrzokecxzksfksuakjzm.supabase.co',
+  cle: 'sb_publishable_sjILIIPhovDSFlkDt76MTQ_edvnkOjk'
+};
+var TOKEN = null;
+var CONTENU = null;      /* données du site (véhicules, offres, config) */
+var ROWS = [];           /* toutes les réservations */
+var VISITES = { total: '—', j30: '—', j7: '—', auj: '—' };
+var VUE = 'dashboard';
+var MODIFIE = false;
+var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+function api(chemin, opts, admin){
+  opts = opts || {};
+  opts.headers = Object.assign({ apikey: CFG.cle, 'Content-Type': 'application/json' }, opts.headers || {});
+  if(admin && TOKEN) opts.headers.Authorization = 'Bearer ' + TOKEN;
+  return fetch(CFG.url + chemin, opts);
+}
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fdate(s){ return s ? String(s).split('T')[0].split('-').reverse().join('/') : ''; }
+function isoJour(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function vehById(id){ return (CONTENU.vehicules || []).filter(function(v){ return v.id === id; })[0] || null; }
+function joursResa(r){ return Math.max(1, Math.round((new Date(r.fin) - new Date(r.debut)) / 86400000)); }
+function prixResa(r){
+  if(r.prix) return Number(r.prix);
+  var v = vehById(r.vehicule);
+  if(!v) return 0;
+  var j = joursResa(r);
+  var rem = j >= 7 ? 0.2 : (j >= 3 ? 0.1 : 0);
+  return Math.round(v.prix * j * (1 - rem));
+}
+function telWa(tel){
+  var x = String(tel || '').replace(/[^0-9]/g, '');
+  if(x.slice(0, 1) === '0') x = '33' + x.slice(1);
+  return x;
+}
+function gcalUrl(r){
+  var v = vehById(r.vehicule);
+  var d2 = new Date(r.fin); d2.setDate(d2.getDate() + 1);
+  var dates = r.debut.replace(/-/g, '') + '/' + isoJour(d2).replace(/-/g, '');
+  var titre = '🚗 Location ' + (v ? v.nom : r.vehicule) + ' — ' + (r.nom || '');
+  var details = 'Client : ' + (r.nom || '') + '\nTéléphone : ' + (r.telephone || '') +
+    (r.email ? '\nEmail : ' + r.email : '') + (r.ville ? '\nVille : ' + r.ville : '') +
+    '\nPrix : ' + prixResa(r) + ' €' + (r.message ? '\nMessage : ' + r.message : '');
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text=' + encodeURIComponent(titre) +
+    '&dates=' + dates +
+    '&details=' + encodeURIComponent(details) +
+    (CONTENU.config.adresse ? '&location=' + encodeURIComponent(CONTENU.config.adresse) : '');
+}
+function badge(statut){
+  var cls = statut === 'confirmee' ? 'cmd-confirmee' : (statut === 'refusee' ? 'cmd-refusee' : 'cmd-attente');
+  var txt = statut === 'confirmee' ? '🟢 Confirmée' : (statut === 'refusee' ? '🔴 Refusée' : '🟠 En attente');
+  return '<span class="cmd-badge ' + cls + '">' + txt + '</span>';
+}
+function marquerModifie(){
+  MODIFIE = true;
+  document.getElementById('btn-publier').style.display = 'block';
+}
+
+/* =====================================================
+   CONNEXION
+   ===================================================== */
+document.getElementById('form-login').addEventListener('submit', function(e){
+  e.preventDefault();
+  var err = document.getElementById('lg-err');
+  err.style.display = 'none';
+  api('/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    body: JSON.stringify({ email: document.getElementById('lg-email').value, password: document.getElementById('lg-pass').value })
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(res.access_token){
+      TOKEN = res.access_token;
+      document.getElementById('ecran-login').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      toutCharger();
+    } else {
+      err.style.display = 'block';
+    }
+  }).catch(function(){ err.style.display = 'block'; });
+});
+document.getElementById('btn-deco').addEventListener('click', function(){ location.reload(); });
+
+/* =====================================================
+   CHARGEMENT DES DONNÉES
+   ===================================================== */
+function compterVisites(filtre){
+  var q = '/rest/v1/visites?select=id' + (filtre ? '&' + filtre : '');
+  return api(q, { headers: { Prefer: 'count=exact', Range: '0-0' } }, true).then(function(r){
+    var cr = r.headers.get('content-range') || '/0';
+    return parseInt(cr.split('/')[1], 10) || 0;
+  }).catch(function(){ return 0; });
+}
+function toutCharger(){
+  document.getElementById('contenu').innerHTML = '<p class="vide-note">Chargement de vos données…</p>';
+  var auj = new Date(); auj.setHours(0,0,0,0);
+  var j7 = new Date(auj); j7.setDate(j7.getDate() - 6);
+  var j30 = new Date(auj); j30.setDate(j30.getDate() - 29);
+  Promise.all([
+    api('/rest/v1/contenu?id=eq.1&select=data').then(function(r){ return r.json(); }),
+    api('/rest/v1/reservations?select=*&order=created_at.desc', {}, true).then(function(r){ return r.json(); }),
+    compterVisites(''),
+    compterVisites('jour=gte.' + isoJour(j30)),
+    compterVisites('jour=gte.' + isoJour(j7)),
+    compterVisites('jour=eq.' + isoJour(auj))
+  ]).then(function(res){
+    CONTENU = (res[0] && res[0][0] && res[0][0].data && res[0][0].data.vehicules) ? res[0][0].data : null;
+    if(!CONTENU){
+      document.getElementById('contenu').innerHTML =
+        '<div class="carte"><h3>⚠️ Contenu du site introuvable</h3><p class="note">La base ne contient pas encore les données du site. Ouvrez le site public, connectez-vous à l\'ancien espace admin et cliquez « Publier », ou contactez votre développeur.</p></div>';
+      return;
+    }
+    CONTENU.config = CONTENU.config || {};
+    CONTENU.offres = CONTENU.offres || [];
+    ROWS = Array.isArray(res[1]) ? res[1] : [];
+    VISITES = { total: res[2], j30: res[3], j7: res[4], auj: res[5] };
+    majPastille();
+    afficher(VUE);
+  }).catch(function(){
+    document.getElementById('contenu').innerHTML = '<p class="vide-note">❌ Impossible de charger les données. Vérifiez votre connexion.</p>';
+  });
+}
+function rechargerResas(){
+  return api('/rest/v1/reservations?select=*&order=created_at.desc', {}, true)
+    .then(function(r){ return r.json(); })
+    .then(function(rows){ ROWS = Array.isArray(rows) ? rows : []; majPastille(); });
+}
+function majPastille(){
+  var n = ROWS.filter(function(r){ return r.statut === 'attente'; }).length;
+  var p = document.getElementById('p-attente');
+  p.style.display = n ? 'inline-block' : 'none';
+  p.textContent = n;
+}
+function actionResa(id, statut){
+  var opts = statut === null
+    ? { method: 'DELETE' }
+    : { method: 'PATCH', body: JSON.stringify({ statut: statut }), headers: { Prefer: 'return=minimal' } };
+  return api('/rest/v1/reservations?id=eq.' + id, opts, true).then(rechargerResas).then(function(){ afficher(VUE); });
+}
+function sauverKm(id, valeur){
+  return api('/rest/v1/reservations?id=eq.' + id, {
+    method: 'PATCH',
+    headers: { Prefer: 'return=minimal' },
+    body: JSON.stringify({ km: parseInt(valeur, 10) || null })
+  }, true).then(rechargerResas).then(function(){ afficher(VUE); });
+}
+
+/* =====================================================
+   PUBLICATION (contenu du site)
+   ===================================================== */
+document.getElementById('btn-publier').addEventListener('click', function(){
+  var b = this;
+  b.textContent = '⏳ Publication…';
+  api('/rest/v1/contenu?id=eq.1', {
+    method: 'PATCH',
+    headers: { Prefer: 'return=minimal' },
+    body: JSON.stringify({ data: CONTENU })
+  }, true).then(function(r){
+    if(r.ok){
+      MODIFIE = false;
+      b.textContent = '✅ Publié !';
+      setTimeout(function(){ b.textContent = '📤 Publier les modifications'; b.style.display = 'none'; }, 1800);
+    } else {
+      b.textContent = '❌ Erreur — réessayez';
+    }
+  }).catch(function(){ b.textContent = '❌ Hors ligne'; });
+});
+
+/* =====================================================
+   NAVIGATION
+   ===================================================== */
+document.querySelectorAll('.nav-item').forEach(function(b){
+  b.addEventListener('click', function(){ afficher(b.dataset.vue); });
+});
+function afficher(vue){
+  VUE = vue;
+  document.querySelectorAll('.nav-item').forEach(function(b){
+    b.classList.toggle('actif', b.dataset.vue === vue);
+  });
+  var vues = {
+    dashboard: vueDashboard, commandes: vueCommandes, clients: vueClients,
+    voitures: vueVoitures, offres: vueOffres, historique: vueHistorique,
+    stats: vueStats, reglages: vueReglages
+  };
+  (vues[vue] || vueDashboard)();
+  window.scrollTo(0, 0);
+}
+function page(titre, sous, html){
+  document.getElementById('contenu').innerHTML =
+    '<div class="titre-page">' + titre + '</div><p class="sous-page">' + sous + '</p>' + html;
+}
+
+/* =====================================================
+   VUE : TABLEAU DE BORD
+   ===================================================== */
+function vueDashboard(){
+  var maintenant = new Date(); maintenant.setHours(0,0,0,0);
+  var auj = isoJour(maintenant);
+  var annee = maintenant.getFullYear(), mois = maintenant.getMonth();
+  var nbJoursMois = new Date(annee, mois + 1, 0).getDate();
+  var attente = ROWS.filter(function(r){ return r.statut === 'attente'; });
+  var confirmees = ROWS.filter(function(r){ return r.statut === 'confirmee'; });
+  var aVenir = confirmees.filter(function(r){ return r.fin >= auj; }).sort(function(a, b){ return a.debut < b.debut ? -1 : 1; });
+  var revenus = 0, occ = {};
+  (CONTENU.vehicules || []).forEach(function(v){ occ[v.id] = {}; });
+  confirmees.forEach(function(r){
+    var v = vehById(r.vehicule);
+    for(var d = new Date(r.debut); d <= new Date(r.fin); d.setDate(d.getDate() + 1)){
+      if(d.getFullYear() === annee && d.getMonth() === mois){
+        if(v) revenus += v.prix;
+        if(occ[r.vehicule]) occ[r.vehicule][isoJour(d)] = 1;
+      }
+    }
+  });
+  (CONTENU.vehicules || []).forEach(function(v){
+    (v.reservations || []).forEach(function(s){
+      var d = new Date(s);
+      if(d.getFullYear() === annee && d.getMonth() === mois) occ[v.id][s] = 1;
+    });
+  });
+  var totalOcc = 0;
+  (CONTENU.vehicules || []).forEach(function(v){ totalOcc += Object.keys(occ[v.id] || {}).length; });
+  var pctGlobal = CONTENU.vehicules.length ? Math.round(100 * totalOcc / (nbJoursMois * CONTENU.vehicules.length)) : 0;
+
+  var h = '<div class="dash-grid">' +
+    '<div class="dash-tile"><div class="dash-num">' + VISITES.j30 + '</div><div class="dash-lab">👁 Visites (30 jours)</div></div>' +
+    '<div class="dash-tile' + (attente.length ? ' dash-alerte' : '') + '"><div class="dash-num">' + attente.length + '</div><div class="dash-lab">🟠 À traiter</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + aVenir.length + '</div><div class="dash-lab">📅 Locations à venir</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + revenus.toLocaleString('fr-FR') + ' €</div><div class="dash-lab">💶 Revenus — ' + MOIS[mois] + '</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + pctGlobal + '%</div><div class="dash-lab">📈 Occupation — ' + MOIS[mois] + '</div></div>' +
+    '</div>';
+
+  h += '<div class="carte"><h3>👁 Fréquentation du site</h3><div class="dash-grid" style="margin:0">' +
+    '<div class="dash-tile"><div class="dash-num">' + VISITES.auj + '</div><div class="dash-lab">Aujourd\'hui</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + VISITES.j7 + '</div><div class="dash-lab">7 derniers jours</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + VISITES.j30 + '</div><div class="dash-lab">30 derniers jours</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + VISITES.total + '</div><div class="dash-lab">Depuis le lancement</div></div>' +
+    '</div></div>';
+
+  if(attente.length){
+    h += '<div class="carte"><h3>🟠 Demandes à traiter (' + attente.length + ')</h3>';
+    attente.slice(0, 3).forEach(function(r){ h += ligneCommande(r, false); });
+    h += '<button class="btn btn-primary" onclick="afficher(\'commandes\')" style="margin-top:6px">Voir toutes les commandes</button></div>';
+  }
+  h += '<div class="carte"><h3>📅 Prochaines locations</h3>';
+  if(aVenir.length){
+    aVenir.slice(0, 5).forEach(function(r){
+      var v = vehById(r.vehicule);
+      h += '<div class="occ-row" style="gap:14px"><span style="font-weight:700;font-size:.88rem;white-space:nowrap">' + fdate(r.debut) + ' → ' + fdate(r.fin) + '</span>' +
+        '<span style="flex:1;font-size:.87rem;color:var(--muted)">' + esc(v ? v.nom : r.vehicule) + ' · ' + esc(r.nom) + ' — ' + esc(r.telephone) + '</span>' +
+        '<a class="btn btn-ghost" style="padding:6px 12px;font-size:.78rem" target="_blank" rel="noopener" href="' + gcalUrl(r) + '">📅 Agenda</a></div>';
+    });
+  } else {
+    h += '<p class="note">Aucune location confirmée à venir.</p>';
+  }
+  h += '</div>';
+  page('📊 Tableau de bord', 'Vue d\'ensemble de votre activité en temps réel.', h);
+}
+
+/* =====================================================
+   VUE : COMMANDES
+   ===================================================== */
+var FILTRE = { statut: 'tous', veh: 'tous' };
+function ligneCommande(rw, complet){
+  var v = vehById(rw.vehicule);
+  var h = '<div class="cmd-item"><div class="cmd-tete">' +
+    '<span class="cmd-nom">' + esc(rw.nom || 'Sans nom') + '</span>' + badge(rw.statut) +
+    '<span class="cmd-prix">' + prixResa(rw).toLocaleString('fr-FR') + ' €</span></div>' +
+    '<div class="cmd-infos">' +
+    '<span>🚗 <b>' + esc(v ? v.nom : rw.vehicule) + '</b></span>' +
+    '<span>📅 <b>' + fdate(rw.debut) + ' → ' + fdate(rw.fin) + '</b> (' + joursResa(rw) + ' j)</span>' +
+    '<span>📞 <a href="tel:' + esc(rw.telephone) + '">' + esc(rw.telephone || '—') + '</a></span>' +
+    (rw.email ? '<span>✉️ <a href="mailto:' + esc(rw.email) + '">' + esc(rw.email) + '</a></span>' : '') +
+    (rw.ville ? '<span>🏙️ ' + esc(rw.ville) + ' <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(rw.ville) + '">(carte)</a></span>' : '') +
+    (rw.age ? '<span>🎂 ' + esc(rw.age) + ' ans</span>' : '') +
+    '<span>🕐 Reçue le ' + fdate(rw.created_at) + '</span>' +
+    (rw.km ? '<span>🛣 Km au retour : <b>' + Number(rw.km).toLocaleString('fr-FR') + '</b></span>' : '') +
+    '</div>' +
+    (rw.message ? '<p class="cmd-msg">💬 ' + esc(rw.message) + '</p>' : '');
+  if(complet){
+    h += '<div class="adm-row" style="margin-top:12px">';
+    if(rw.statut !== 'confirmee') h += '<button class="btn btn-ghost" onclick="actionResa(' + rw.id + ', \'confirmee\')">✅ Confirmer</button>';
+    if(rw.statut !== 'refusee') h += '<button class="btn btn-ghost" onclick="actionResa(' + rw.id + ', \'refusee\')">❌ Refuser</button>';
+    h += '<button class="btn btn-danger" onclick="if(this.dataset.c){actionResa(' + rw.id + ', null)}else{this.dataset.c=1;this.textContent=\'⚠️ Confirmer la suppression\'}">🗑 Supprimer</button>';
+    if(rw.telephone){
+      h += '<a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/' + telWa(rw.telephone) +
+        '?text=' + encodeURIComponent('Bonjour ' + (rw.nom || '') + ', concernant votre demande de location du ' + fdate(rw.debut) + ' au ' + fdate(rw.fin) + ' :') + '">💬 WhatsApp</a>';
+    }
+    if(rw.statut === 'confirmee'){
+      h += '<a class="btn btn-ghost" target="_blank" rel="noopener" href="' + gcalUrl(rw) + '">📅 Google Calendar</a>';
+    }
+    h += '</div>';
+    if(rw.statut === 'confirmee'){
+      h += '<div class="km-boite"><span class="note">🛣 Km au retour :</span>' +
+        '<input type="number" min="0" id="km-' + rw.id + '" value="' + (rw.km || '') + '" placeholder="ex : 45230">' +
+        '<button class="btn btn-ghost" onclick="sauverKm(' + rw.id + ', document.getElementById(\'km-' + rw.id + '\').value)">💾 Enregistrer</button></div>';
+    }
+  }
+  return h + '</div>';
+}
+function vueCommandes(){
+  var h = '<div class="cmd-filtres">';
+  [{ k: 'tous', t: 'Toutes' }, { k: 'attente', t: '🟠 En attente' }, { k: 'confirmee', t: '🟢 Confirmées' }, { k: 'refusee', t: '🔴 Refusées' }].forEach(function(f){
+    h += '<button class="cmd-filtre' + (FILTRE.statut === f.k ? ' actif' : '') + '" onclick="FILTRE.statut=\'' + f.k + '\';afficher(\'commandes\')">' + f.t + '</button>';
+  });
+  (CONTENU.vehicules || []).forEach(function(v){
+    h += '<button class="cmd-filtre' + (FILTRE.veh === v.id ? ' actif' : '') + '" onclick="FILTRE.veh = FILTRE.veh===\'' + v.id + '\' ? \'tous\' : \'' + v.id + '\';afficher(\'commandes\')">🚗 ' + esc(v.nom.split(' ').slice(-2).join(' ')) + '</button>';
+  });
+  h += '</div>';
+  var visibles = ROWS.filter(function(r){
+    return (FILTRE.statut === 'tous' || r.statut === FILTRE.statut) && (FILTRE.veh === 'tous' || r.vehicule === FILTRE.veh);
+  });
+  if(visibles.length){
+    visibles.forEach(function(r){ h += ligneCommande(r, true); });
+  } else {
+    h += '<p class="vide-note">Aucune commande dans cette catégorie.</p>';
+  }
+  page('🗂 Commandes (' + ROWS.length + ')', 'Toutes les demandes de réservation, avec la fiche complète de chaque client.', h);
+}
+
+/* =====================================================
+   VUE : CLIENTS
+   ===================================================== */
+function vueClients(){
+  var parClient = {};
+  ROWS.forEach(function(r){
+    var cle = (r.telephone || r.email || r.nom || '?').toString().replace(/\s/g, '');
+    if(!parClient[cle]) parClient[cle] = { nom: r.nom, tel: r.telephone, email: r.email, ville: r.ville, demandes: 0, confirmees: 0, total: 0, derniere: r.debut };
+    var c = parClient[cle];
+    c.demandes++;
+    if(r.statut === 'confirmee'){ c.confirmees++; c.total += prixResa(r); }
+    if(r.debut > c.derniere) c.derniere = r.debut;
+    if(r.email && !c.email) c.email = r.email;
+    if(r.ville && !c.ville) c.ville = r.ville;
+  });
+  var clients = Object.keys(parClient).map(function(k){ return parClient[k]; }).sort(function(a, b){ return b.total - a.total; });
+  var h = '<div class="carte recherche"><input id="cli-cherche" placeholder="🔍 Rechercher un client (nom, téléphone, ville…)" oninput="filtrerClients()"></div>';
+  if(clients.length){
+    h += '<div class="carte" style="overflow-x:auto"><table id="cli-table"><thead><tr><th>Client</th><th>Contact</th><th>Ville</th><th>Demandes</th><th>Locations</th><th>Total dépensé</th><th>Dernière</th><th></th></tr></thead><tbody>';
+    clients.forEach(function(c){
+      h += '<tr><td><b>' + esc(c.nom || '—') + '</b></td>' +
+        '<td>' + esc(c.tel || '') + (c.email ? '<br><span class="note">' + esc(c.email) + '</span>' : '') + '</td>' +
+        '<td>' + esc(c.ville || '—') + '</td>' +
+        '<td>' + c.demandes + '</td><td>' + c.confirmees + '</td>' +
+        '<td><b style="color:var(--gold)">' + c.total.toLocaleString('fr-FR') + ' €</b></td>' +
+        '<td>' + fdate(c.derniere) + '</td>' +
+        '<td>' + (c.tel ? '<a class="btn btn-wa" style="padding:6px 12px;font-size:.76rem" target="_blank" rel="noopener" href="https://wa.me/' + telWa(c.tel) + '">💬</a>' : '') + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+  } else {
+    h += '<p class="vide-note">Vos clients apparaîtront ici dès la première demande de réservation.</p>';
+  }
+  page('👥 Clients (' + clients.length + ')', 'Votre fichier clients, construit automatiquement à partir des réservations. Les meilleurs clients en premier.', h);
+}
+function filtrerClients(){
+  var q = document.getElementById('cli-cherche').value.toLowerCase();
+  document.querySelectorAll('#cli-table tbody tr').forEach(function(tr){
+    tr.style.display = tr.textContent.toLowerCase().indexOf(q) !== -1 ? '' : 'none';
+  });
+}
+
+/* =====================================================
+   VUE : VOITURES
+   ===================================================== */
+function kmActuel(vehId){
+  var releves = ROWS.filter(function(r){ return r.vehicule === vehId && r.km; })
+    .sort(function(a, b){ return a.fin < b.fin ? -1 : 1; });
+  return releves.length ? Number(releves[releves.length - 1].km) : null;
+}
+function vueVoitures(){
+  var h = '';
+  (CONTENU.vehicules || []).forEach(function(v, idx){
+    var km = kmActuel(v.id);
+    h += '<div class="veh-bloc" id="veh-' + idx + '"><div class="cmd-tete"><span class="cmd-nom">🚗 ' + esc(v.nom) + '</span>' +
+      (km ? '<span class="note">🛣 Kilométrage actuel : <b style="color:var(--text)">' + km.toLocaleString('fr-FR') + ' km</b></span>' : '<span class="note">🛣 Kilométrage : aucun relevé</span>') +
+      '</div></div>';
+  });
+  page('🚗 Voitures', 'Gérez votre flotte : fiches, prix, photos, jours bloqués manuellement.', h +
+    '<button class="btn btn-primary" id="btn-add-veh">➕ Ajouter un véhicule</button>');
+  /* remplissage interactif */
+  (CONTENU.vehicules || []).forEach(function(v, idx){ construireVehicule(v, idx); });
+  document.getElementById('btn-add-veh').addEventListener('click', function(){
+    CONTENU.vehicules.push({ id: 'veh' + Math.floor(Math.random() * 1e9), nom: 'Nouveau véhicule', sousTitre: 'Modèle — description', tag: 'Voiture', tagOr: false, couleur: '#31405e', prix: 50, specs: ['5 places'], photos: [], reservations: [] });
+    marquerModifie();
+    afficher('voitures');
+  });
+}
+function champV(parent, labelTxt, valeur, cb, type){
+  var l = document.createElement('label');
+  l.textContent = labelTxt;
+  parent.appendChild(l);
+  var i = document.createElement('input');
+  i.type = type || 'text';
+  i.value = valeur == null ? '' : valeur;
+  i.addEventListener('input', function(){ cb(i.value); marquerModifie(); });
+  parent.appendChild(i);
+}
+function construireVehicule(v, idx){
+  var bloc = document.getElementById('veh-' + idx);
+  champV(bloc, 'Nom', v.nom, function(x){ v.nom = x; });
+  champV(bloc, 'Sous-titre', v.sousTitre, function(x){ v.sousTitre = x; });
+  var r2 = document.createElement('div'); r2.className = 'adm-row'; bloc.appendChild(r2);
+  var c1 = document.createElement('div'); c1.style.flex = '1'; r2.appendChild(c1);
+  champV(c1, 'Badge', v.tag, function(x){ v.tag = x; });
+  var c2 = document.createElement('div'); c2.style.flex = '1'; r2.appendChild(c2);
+  champV(c2, 'Prix / jour (€)', v.prix, function(x){ v.prix = parseFloat(x) || 0; }, 'number');
+  var l = document.createElement('label'); l.textContent = 'Caractéristiques (une par ligne)'; bloc.appendChild(l);
+  var ta = document.createElement('textarea'); ta.rows = 3; ta.value = (v.specs || []).join('\n');
+  ta.addEventListener('input', function(){ v.specs = ta.value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean); marquerModifie(); });
+  bloc.appendChild(ta);
+  /* photos */
+  var lp = document.createElement('label'); lp.textContent = 'Photos (la 1re s\'affiche sur la fiche)'; bloc.appendChild(lp);
+  var thumbs = document.createElement('div'); thumbs.className = 'adm-thumbs'; bloc.appendChild(thumbs);
+  function majThumbs(){
+    thumbs.innerHTML = '';
+    (v.photos || []).forEach(function(p, i){
+      var t = document.createElement('div'); t.className = 'adm-thumb';
+      var im = document.createElement('img'); im.src = p; t.appendChild(im);
+      var x = document.createElement('button'); x.textContent = '✕';
+      x.addEventListener('click', function(){ v.photos.splice(i, 1); majThumbs(); marquerModifie(); });
+      t.appendChild(x);
+      thumbs.appendChild(t);
+    });
+  }
+  majThumbs();
+  var file = document.createElement('input'); file.type = 'file'; file.accept = 'image/*'; file.multiple = true;
+  file.addEventListener('change', function(){
+    Array.prototype.forEach.call(file.files, function(f){
+      var rd = new FileReader();
+      rd.onload = function(){
+        var img = new Image();
+        img.onload = function(){
+          var scale = Math.min(1, 1200 / img.width);
+          var cn = document.createElement('canvas');
+          cn.width = Math.round(img.width * scale);
+          cn.height = Math.round(img.height * scale);
+          cn.getContext('2d').drawImage(img, 0, 0, cn.width, cn.height);
+          v.photos = v.photos || [];
+          v.photos.push(cn.toDataURL('image/jpeg', 0.82));
+          majThumbs();
+          marquerModifie();
+        };
+        img.src = rd.result;
+      };
+      rd.readAsDataURL(f);
+    });
+    file.value = '';
+  });
+  bloc.appendChild(file);
+  /* jours bloqués */
+  var lb = document.createElement('label'); lb.textContent = 'Jours bloqués manuellement (entretien, usage perso…)'; bloc.appendChild(lb);
+  var chips = document.createElement('div'); chips.className = 'adm-chips'; bloc.appendChild(chips);
+  function majChips(){
+    chips.innerHTML = '';
+    (v.reservations || []).sort().forEach(function(dt, i){
+      var c = document.createElement('span'); c.className = 'adm-chip'; c.textContent = fdate(dt);
+      var x = document.createElement('button'); x.textContent = '✕';
+      x.addEventListener('click', function(){ v.reservations.splice(i, 1); majChips(); marquerModifie(); });
+      c.appendChild(x);
+      chips.appendChild(c);
+    });
+  }
+  majChips();
+  var rr = document.createElement('div'); rr.className = 'adm-row'; bloc.appendChild(rr);
+  var d1 = document.createElement('input'); d1.type = 'date'; rr.appendChild(d1);
+  var d2 = document.createElement('input'); d2.type = 'date'; d2.title = 'Fin (optionnel)'; rr.appendChild(d2);
+  var bb = document.createElement('button'); bb.className = 'btn btn-ghost'; bb.textContent = 'Bloquer';
+  bb.addEventListener('click', function(){
+    if(!d1.value) return;
+    v.reservations = v.reservations || [];
+    var fin = d2.value ? new Date(d2.value) : new Date(d1.value);
+    for(var d = new Date(d1.value); d <= fin; d.setDate(d.getDate() + 1)){
+      var s = isoJour(d);
+      if(v.reservations.indexOf(s) === -1) v.reservations.push(s);
+    }
+    d1.value = ''; d2.value = '';
+    majChips();
+    marquerModifie();
+  });
+  rr.appendChild(bb);
+  /* suppression */
+  var del = document.createElement('button'); del.className = 'btn btn-danger'; del.style.marginTop = '14px';
+  del.textContent = '🗑 Supprimer ce véhicule';
+  del.addEventListener('click', function(){
+    if(del.dataset.c){ CONTENU.vehicules.splice(idx, 1); marquerModifie(); afficher('voitures'); }
+    else { del.dataset.c = 1; del.textContent = '⚠️ Cliquez encore pour confirmer'; }
+  });
+  bloc.appendChild(del);
+}
+
+/* =====================================================
+   VUE : OFFRES
+   ===================================================== */
+function vueOffres(){
+  page('🔥 Offres du moment', 'Affichées en haut du site public. Supprimez-les toutes pour masquer la section.',
+    '<div id="offres-zone"></div><button class="btn btn-primary" id="btn-add-offre">➕ Ajouter une offre</button>');
+  var zone = document.getElementById('offres-zone');
+  function maj(){
+    zone.innerHTML = '';
+    (CONTENU.offres || []).forEach(function(o, i){
+      var bloc = document.createElement('div'); bloc.className = 'veh-bloc';
+      champV(bloc, 'Émoji', o.emoji || '🎁', function(x){ o.emoji = x; });
+      champV(bloc, 'Titre', o.titre || '', function(x){ o.titre = x; });
+      champV(bloc, 'Description', o.texte || '', function(x){ o.texte = x; });
+      var del = document.createElement('button'); del.className = 'btn btn-danger'; del.style.marginTop = '12px';
+      del.textContent = '🗑 Supprimer cette offre';
+      del.addEventListener('click', function(){ CONTENU.offres.splice(i, 1); maj(); marquerModifie(); });
+      bloc.appendChild(del);
+      zone.appendChild(bloc);
+    });
+  }
+  maj();
+  document.getElementById('btn-add-offre').addEventListener('click', function(){
+    CONTENU.offres.push({ emoji: '🎁', titre: 'Nouvelle offre', texte: "Description de l'offre" });
+    maj();
+    marquerModifie();
+  });
+}
+
+/* =====================================================
+   VUE : HISTORIQUE
+   ===================================================== */
+function vueHistorique(){
+  var auj = isoJour(new Date());
+  var passees = ROWS.filter(function(r){ return r.statut === 'confirmee' && r.fin < auj; })
+    .sort(function(a, b){ return a.fin > b.fin ? -1 : 1; });
+  var totalCA = 0, totalJ = 0;
+  passees.forEach(function(r){ totalCA += prixResa(r); totalJ += joursResa(r); });
+  var h = '<div class="dash-grid">' +
+    '<div class="dash-tile"><div class="dash-num">' + passees.length + '</div><div class="dash-lab">🏁 Locations terminées</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + totalCA.toLocaleString('fr-FR') + ' €</div><div class="dash-lab">💶 Chiffre d\'affaires réalisé</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + totalJ + '</div><div class="dash-lab">📅 Jours loués au total</div></div>' +
+    '</div>';
+  if(passees.length){
+    passees.forEach(function(r){ h += ligneCommande(r, true); });
+  } else {
+    h += '<p class="vide-note">Les locations terminées apparaîtront ici. Pensez à y saisir le kilométrage au retour de chaque véhicule.</p>';
+  }
+  page('🕐 Historique', 'Vos locations terminées — saisissez le km au retour pour alimenter le suivi kilométrage.', h);
+}
+
+/* =====================================================
+   VUE : STATISTIQUES
+   ===================================================== */
+function barreH(nom, valeur, max, texte){
+  var pct = max > 0 ? Math.round(100 * valeur / max) : 0;
+  return '<div class="occ-row"><span class="occ-nom">' + esc(nom) + '</span>' +
+    '<span class="occ-track"><span class="occ-fill" style="width:' + pct + '%"></span></span>' +
+    '<span class="occ-pct">' + texte + '</span></div>';
+}
+function vueStats(){
+  var confirmees = ROWS.filter(function(r){ return r.statut === 'confirmee'; });
+  var attente = ROWS.filter(function(r){ return r.statut === 'attente'; });
+  var totalRevenus = 0, totalJours = 0;
+  confirmees.forEach(function(r){ totalRevenus += prixResa(r); totalJours += joursResa(r); });
+  var conversion = ROWS.length ? Math.round(100 * confirmees.length / ROWS.length) : 0;
+  var panier = confirmees.length ? Math.round(totalRevenus / confirmees.length) : 0;
+  var dureeMoy = confirmees.length ? (totalJours / confirmees.length).toFixed(1) : 0;
+  var maintenant = new Date();
+  var moisData = [];
+  for(var i = 5; i >= 0; i--){
+    var ref = new Date(maintenant.getFullYear(), maintenant.getMonth() - i, 1);
+    moisData.push({ a: ref.getFullYear(), m: ref.getMonth(), label: MOIS[ref.getMonth()].slice(0, 4) + '. ' + String(ref.getFullYear()).slice(2), total: 0 });
+  }
+  confirmees.forEach(function(r){
+    var v = vehById(r.vehicule);
+    if(!v) return;
+    for(var d = new Date(r.debut); d <= new Date(r.fin); d.setDate(d.getDate() + 1)){
+      moisData.forEach(function(md){ if(d.getFullYear() === md.a && d.getMonth() === md.m) md.total += v.prix; });
+    }
+  });
+  var maxMois = Math.max.apply(null, moisData.map(function(m){ return m.total; }).concat([1]));
+  var parVeh = (CONTENU.vehicules || []).map(function(v){
+    var revenus = 0, jours = 0, demandes = 0;
+    ROWS.forEach(function(r){
+      if(r.vehicule !== v.id) return;
+      demandes++;
+      if(r.statut === 'confirmee'){ revenus += prixResa(r); jours += joursResa(r); }
+    });
+    return { id: v.id, nom: v.nom, revenus: revenus, jours: jours, demandes: demandes };
+  });
+  var maxVeh = Math.max.apply(null, parVeh.map(function(x){ return x.revenus; }).concat([1]));
+
+  /* suivi kilométrage */
+  var kmHtml = '';
+  parVeh.forEach(function(x){
+    var releves = ROWS.filter(function(r){ return r.vehicule === x.id && r.km; })
+      .sort(function(a, b){ return a.fin < b.fin ? -1 : 1; });
+    if(!releves.length){
+      kmHtml += '<div class="occ-row"><span class="occ-nom">' + esc(x.nom) + '</span><span style="flex:1" class="note">Aucun relevé — saisissez le km au retour dans Commandes ou Historique</span></div>';
+      return;
+    }
+    var actuel = Number(releves[releves.length - 1].km);
+    var parcourus = releves.length > 1 ? actuel - Number(releves[0].km) : 0;
+    kmHtml += '<div class="occ-row"><span class="occ-nom">' + esc(x.nom) + '</span>' +
+      '<span style="flex:1;font-size:.86rem;color:var(--muted)">Kilométrage actuel : <b style="color:var(--text)">' + actuel.toLocaleString('fr-FR') + ' km</b>' +
+      (parcourus > 0 ? ' · parcourus sur les locations suivies : <b style="color:var(--text)">' + parcourus.toLocaleString('fr-FR') + ' km</b>' : '') +
+      ' · ' + releves.length + ' relevé' + (releves.length > 1 ? 's' : '') + '</span></div>';
+    /* détail par location */
+    for(var i = releves.length - 1; i > 0 && i > releves.length - 4; i--){
+      var diff = Number(releves[i].km) - Number(releves[i - 1].km);
+      if(diff > 0){
+        kmHtml += '<div class="occ-row" style="padding-left:16px"><span class="occ-nom" style="font-size:.78rem">↳ ' + fdate(releves[i].debut) + ' → ' + fdate(releves[i].fin) + ' (' + esc(releves[i].nom || '') + ')</span>' +
+          '<span style="flex:1;font-size:.8rem;color:var(--muted)">' + diff.toLocaleString('fr-FR') + ' km parcourus</span></div>';
+      }
+    }
+  });
+
+  var h = '<div class="dash-grid">' +
+    '<div class="dash-tile"><div class="dash-num">' + ROWS.length + '</div><div class="dash-lab">📋 Demandes reçues</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + conversion + '%</div><div class="dash-lab">✅ Taux de confirmation</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + totalRevenus.toLocaleString('fr-FR') + ' €</div><div class="dash-lab">💶 Revenus confirmés (total)</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + panier.toLocaleString('fr-FR') + ' €</div><div class="dash-lab">🛒 Panier moyen</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + dureeMoy + ' j</div><div class="dash-lab">⏱ Durée moyenne</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + VISITES.j30 + '</div><div class="dash-lab">👁 Visites (30 j)</div></div>' +
+    '</div>' +
+    '<div class="carte"><h3>💶 Revenus confirmés — 6 derniers mois</h3>' +
+    moisData.map(function(md){ return barreH(md.label, md.total, maxMois, md.total.toLocaleString('fr-FR') + ' €'); }).join('') + '</div>' +
+    '<div class="carte"><h3>🚗 Revenus par véhicule</h3>' +
+    parVeh.map(function(x){ return barreH(x.nom, x.revenus, maxVeh, x.revenus.toLocaleString('fr-FR') + ' €'); }).join('') +
+    '<p class="dash-soustitre">Activité</p>' +
+    parVeh.map(function(x){ return '<div class="occ-row"><span class="occ-nom">' + esc(x.nom) + '</span><span style="flex:1;font-size:.84rem;color:var(--muted)">' + x.demandes + ' demande' + (x.demandes > 1 ? 's' : '') + ' · ' + x.jours + ' jour' + (x.jours > 1 ? 's' : '') + ' loué' + (x.jours > 1 ? 's' : '') + '</span></div>'; }).join('') + '</div>' +
+    '<div class="carte"><h3>🛣 Suivi kilométrage</h3>' + kmHtml + '</div>';
+  page('📈 Statistiques', 'Analysez vos ventes, votre fréquentation et votre flotte pour piloter votre activité.', h);
+}
+
+/* =====================================================
+   VUE : RÉGLAGES
+   ===================================================== */
+function vueReglages(){
+  page('⚙️ Réglages', 'Coordonnées affichées sur le site public et lieu de retrait des véhicules.',
+    '<div class="carte" id="regl-zone"><h3>📞 Coordonnées</h3></div>' +
+    '<div class="carte"><h3>📍 Lieu de retrait (Google Maps)</h3><div id="regl-adresse"></div>' +
+    '<p class="note" style="margin-top:10px">Cette adresse s\'affiche sur le site public avec une carte Google Maps, et elle est ajoutée automatiquement aux événements Google Calendar.</p>' +
+    '<div id="apercu-map" style="margin-top:12px"></div></div>' +
+    '<div class="carte"><h3>💾 Sauvegarde</h3><p class="note" style="margin-bottom:12px">Téléchargez une copie de toutes les données du site (véhicules, offres, réglages).</p>' +
+    '<button class="btn btn-ghost" id="btn-export">⬇️ Télécharger la sauvegarde</button></div>');
+  var zone = document.getElementById('regl-zone');
+  var c = CONTENU.config;
+  champV(zone, 'Téléphone affiché', c.telAffiche, function(x){
+    c.telAffiche = x;
+    c.tel = '+33' + x.replace(/[^0-9]/g, '').replace(/^0/, '');
+  });
+  champV(zone, 'WhatsApp (format international, ex : 33612345678)', c.whatsapp, function(x){ c.whatsapp = x.replace(/[^0-9]/g, ''); });
+  champV(zone, 'Email', c.email, function(x){ c.email = x; });
+  var za = document.getElementById('regl-adresse');
+  champV(za, 'Adresse de retrait des véhicules', c.adresse || '', function(x){
+    c.adresse = x;
+    majApercuMap();
+  });
+  function majApercuMap(){
+    var ap = document.getElementById('apercu-map');
+    ap.innerHTML = c.adresse
+      ? '<iframe src="https://maps.google.com/maps?q=' + encodeURIComponent(c.adresse) + '&output=embed" style="width:100%;height:220px;border:1px solid var(--line);border-radius:12px" loading="lazy"></iframe>'
+      : '<p class="note">Saisissez une adresse pour voir l\'aperçu de la carte.</p>';
+  }
+  majApercuMap();
+  document.getElementById('btn-export').addEventListener('click', function(){
+    var blob = new Blob([JSON.stringify(CONTENU, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'sauvegarde-lb-location.json';
+    a.click();
+  });
+}
+</script>
+</body>
+</html>
