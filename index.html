@@ -368,6 +368,25 @@
   .occ-fill{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
   .occ-pct{flex:0 0 38px;text-align:right;font-size:.8rem;color:var(--text)}
   .dash-resa{font-size:.86rem;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:var(--card)}
+  /* ---------- ADMIN : commandes & statistiques ---------- */
+  .vue-large{width:min(900px,96vw)}
+  .cmd-filtres{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .cmd-filtre{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--muted);font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+  .cmd-filtre.actif{background:linear-gradient(135deg,var(--accent),#2a5fd6);color:#fff;border-color:transparent}
+  .cmd-item{border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;background:var(--bg2)}
+  .cmd-tete{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .cmd-nom{font-weight:800;font-size:1.02rem}
+  .cmd-prix{font-weight:800;color:var(--gold)}
+  .cmd-badge{font-size:.76rem;font-weight:700;padding:4px 12px;border-radius:999px;border:1px solid}
+  .cmd-attente{color:#eec27a;border-color:rgba(232,168,60,.5);background:rgba(232,168,60,.1)}
+  .cmd-confirmee{color:#7fdea3;border-color:rgba(31,174,84,.5);background:rgba(31,174,84,.1)}
+  .cmd-refusee{color:#e88;border-color:rgba(224,82,82,.5);background:rgba(224,82,82,.1)}
+  .cmd-infos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px 14px;font-size:.87rem;color:var(--muted)}
+  .cmd-infos b{color:var(--text);font-weight:600}
+  .cmd-infos a{color:var(--accent2);text-decoration:none}
+  .cmd-msg{margin-top:8px;font-size:.85rem;color:var(--muted);font-style:italic;border-left:2px solid var(--line);padding-left:10px}
+  .stat-bloc{margin-bottom:20px}
+  .vide-note{text-align:center;color:var(--muted);padding:30px 0}
   @media(max-width:840px){
     .nav-links a:not(.btn){display:none}
     .contact-wrap{grid-template-columns:1fr}
@@ -477,10 +496,25 @@
           <input type="date" id="rc-fin" required>
         </div>
       </div>
-      <label for="rc-nom">Votre nom</label>
+      <p class="adm-note" id="rc-prix" style="margin:10px 0 0"></p>
+      <label for="rc-nom">Votre nom complet</label>
       <input id="rc-nom" required placeholder="Nom et prénom">
-      <label for="rc-tel">Votre téléphone</label>
-      <input id="rc-tel" type="tel" required placeholder="06 12 34 56 78">
+      <div class="adm-row">
+        <div style="flex:2;min-width:160px">
+          <label for="rc-tel">Téléphone</label>
+          <input id="rc-tel" type="tel" required placeholder="06 12 34 56 78">
+        </div>
+        <div style="flex:1;min-width:90px">
+          <label for="rc-age">Âge</label>
+          <input id="rc-age" type="number" min="18" max="99" required placeholder="25">
+        </div>
+      </div>
+      <label for="rc-email">Email</label>
+      <input id="rc-email" type="email" required placeholder="vous@exemple.fr">
+      <label for="rc-ville">Ville</label>
+      <input id="rc-ville" placeholder="Votre ville (optionnel)">
+      <label for="rc-msg">Message (optionnel)</label>
+      <textarea id="rc-msg" rows="2" placeholder="Précisions, questions…"></textarea>
       <button type="submit" class="btn btn-primary" style="width:100%;margin-top:18px">📅 Envoyer ma demande de réservation</button>
       <p class="adm-note" id="rc-status"></p>
     </form>
@@ -612,6 +646,14 @@
     <div class="lb-title" id="lb-title"></div>
     <div class="lb-count" id="lb-count"></div>
   </div>
+</div>
+
+<div class="cal-modal" id="cmd-modal">
+  <div class="cal-card vue-large" id="cmd-card"></div>
+</div>
+
+<div class="cal-modal" id="stats-modal">
+  <div class="cal-card vue-large" id="stats-card"></div>
 </div>
 
 <div class="cal-modal" id="admin-login">
@@ -1141,6 +1183,23 @@ function closeCal(){
   calModal.classList.remove('open');
   document.body.style.overflow = '';
 }
+function prixEstime(vehId, d1, d2){
+  var v = vehById(vehId);
+  if(!v || !d1 || !d2 || d2 < d1) return null;
+  var jours = Math.max(1, Math.round((new Date(d2) - new Date(d1)) / 86400000));
+  var remise = jours >= 7 ? 0.2 : (jours >= 3 ? 0.1 : 0);
+  return { jours: jours, remise: remise, total: Math.round(v.prix * jours * (1 - remise)) };
+}
+function majPrixEstime(){
+  var el = document.getElementById('rc-prix');
+  var p = prixEstime(calVeh, document.getElementById('rc-debut').value, document.getElementById('rc-fin').value);
+  el.textContent = p
+    ? '💶 Prix estimé : ' + p.total.toLocaleString('fr-FR') + ' € (' + p.jours + ' jour' + (p.jours > 1 ? 's' : '') + (p.remise ? ', remise de ' + (p.remise * 100) + '% incluse' : '') + ')'
+    : '';
+}
+['rc-debut','rc-fin'].forEach(function(id){
+  document.getElementById(id).addEventListener('change', majPrixEstime);
+});
 document.getElementById('resa-cal').addEventListener('submit', function(e){
   e.preventDefault();
   var statusEl = document.getElementById('rc-status');
@@ -1158,24 +1217,40 @@ document.getElementById('resa-cal').addEventListener('submit', function(e){
     }
   }
   statusEl.textContent = '⏳ Envoi en cours…';
-  fetch(urlServeur('/rest/v1/reservations'), {
-    method: 'POST',
-    headers: {
-      apikey: SITE.config.serveur.cle,
-      'Content-Type': 'application/json',
-      Prefer: 'return=minimal'
-    },
-    body: JSON.stringify({ vehicule: calVeh, debut: d1, fin: d2, nom: nom, telephone: tel })
-  }).then(function(r){
-    if(r.ok){
-      RESA.push({ vehicule: calVeh, debut: d1, fin: d2, statut: 'attente' });
-      renderCal();
-      document.getElementById('resa-cal').reset();
-      statusEl.textContent = '✅ Demande envoyée ! Nous vous confirmons très vite par téléphone.';
-    } else {
-      statusEl.textContent = '❌ Erreur ' + r.status + ' — réessayez ou contactez-nous par téléphone.';
-    }
-  }).catch(function(){
+  var p = prixEstime(calVeh, d1, d2);
+  var complet = {
+    vehicule: calVeh, debut: d1, fin: d2, nom: nom, telephone: tel,
+    email: document.getElementById('rc-email').value.trim(),
+    ville: document.getElementById('rc-ville').value.trim(),
+    age: parseInt(document.getElementById('rc-age').value, 10) || null,
+    message: document.getElementById('rc-msg').value.trim(),
+    prix: p ? p.total : null
+  };
+  var basique = { vehicule: calVeh, debut: d1, fin: d2, nom: nom, telephone: tel };
+  function envoyer(donnees, repli){
+    return fetch(urlServeur('/rest/v1/reservations'), {
+      method: 'POST',
+      headers: {
+        apikey: SITE.config.serveur.cle,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify(donnees)
+    }).then(function(r){
+      if(r.ok){
+        RESA.push({ vehicule: calVeh, debut: d1, fin: d2, statut: 'attente' });
+        renderCal();
+        document.getElementById('resa-cal').reset();
+        document.getElementById('rc-prix').textContent = '';
+        statusEl.textContent = '✅ Demande envoyée ! Nous vous confirmons très vite par téléphone.';
+      } else if(repli){
+        return envoyer(basique, false);
+      } else {
+        statusEl.textContent = '❌ Erreur ' + r.status + ' — réessayez ou contactez-nous par téléphone.';
+      }
+    });
+  }
+  envoyer(complet, true).catch(function(){
     statusEl.textContent = '❌ Connexion impossible. Contactez-nous par téléphone.';
   });
 });
@@ -1245,6 +1320,7 @@ document.addEventListener('keydown', function(e){
     lightbox.classList.remove('open');
     closeCal();
     fermerAdmin();
+    if(typeof fermerVues === 'function') fermerVues();
   }
 });
 
@@ -1468,6 +1544,24 @@ function construireAdmin(){
     }).catch(function(){
       corps.innerHTML = '<p class="adm-note">❌ Impossible de charger le tableau de bord.</p>';
     });
+    (function(){
+      var rangee = document.createElement('div');
+      rangee.className = 'adm-row';
+      rangee.style.marginTop = '4px';
+      var bCmd = document.createElement('button');
+      bCmd.className = 'btn btn-primary';
+      bCmd.style.cssText = 'flex:1;padding:11px;font-size:.9rem';
+      bCmd.textContent = '🗂 Page commandes';
+      bCmd.addEventListener('click', ouvrirCommandes);
+      rangee.appendChild(bCmd);
+      var bStats = document.createElement('button');
+      bStats.className = 'btn btn-ghost';
+      bStats.style.cssText = 'flex:1;padding:11px;font-size:.9rem';
+      bStats.textContent = '📈 Statistiques';
+      bStats.addEventListener('click', ouvrirStats);
+      rangee.appendChild(bStats);
+      secD.appendChild(rangee);
+    })();
     card.insertBefore(secD, secC);
   }
 
@@ -1828,6 +1922,244 @@ function exporterSite(){
   document.body.appendChild(a);
   a.click();
   a.remove();
+}
+
+/* =====================================================
+   VUES ADMIN : PAGE COMMANDES & STATISTIQUES
+   ===================================================== */
+var cmdModal = document.getElementById('cmd-modal');
+var statsModal = document.getElementById('stats-modal');
+[cmdModal, statsModal].forEach(function(m){
+  m.addEventListener('click', function(e){ if(e.target === m) m.classList.remove('open'); });
+});
+function fermerVues(){
+  cmdModal.classList.remove('open');
+  statsModal.classList.remove('open');
+}
+var FILTRE = { statut: 'tous', veh: 'tous' };
+
+function chargerToutesCommandes(){
+  return fetch(urlServeur('/rest/v1/reservations?select=*&order=created_at.desc'), {
+    headers: { apikey: SITE.config.serveur.cle, Authorization: 'Bearer ' + SESSION_TOKEN }
+  }).then(function(r){ return r.json(); });
+}
+function fdate(s){ return s ? s.split('T')[0].split('-').reverse().join('/') : ''; }
+function telWa(tel){
+  var x = (tel || '').replace(/[^0-9]/g, '');
+  if(x.slice(0, 1) === '0') x = '33' + x.slice(1);
+  return x;
+}
+function joursResa(r){
+  return Math.max(1, Math.round((new Date(r.fin) - new Date(r.debut)) / 86400000));
+}
+function prixResa(r){
+  if(r.prix) return Number(r.prix);
+  var v = vehById(r.vehicule);
+  if(!v) return 0;
+  var j = joursResa(r);
+  var remise = j >= 7 ? 0.2 : (j >= 3 ? 0.1 : 0);
+  return Math.round(v.prix * j * (1 - remise));
+}
+
+function ouvrirCommandes(){
+  var card = document.getElementById('cmd-card');
+  card.innerHTML = '<p class="adm-note">Chargement des commandes…</p>';
+  cmdModal.classList.add('open');
+  chargerToutesCommandes().then(function(rows){
+    if(!Array.isArray(rows)) rows = [];
+    construireCommandes(rows);
+  }).catch(function(){
+    card.innerHTML = '<p class="adm-note">❌ Impossible de charger les commandes.</p>';
+  });
+}
+function construireCommandes(rows){
+  var card = document.getElementById('cmd-card');
+  card.innerHTML = '';
+  var close = document.createElement('button');
+  close.className = 'cal-close';
+  close.textContent = '✕';
+  close.addEventListener('click', fermerVues);
+  card.appendChild(close);
+  var titre = document.createElement('h3');
+  titre.className = 'adm-titre';
+  titre.textContent = '🗂 Commandes (' + rows.length + ')';
+  card.appendChild(titre);
+  var filtres = document.createElement('div');
+  filtres.className = 'cmd-filtres';
+  [{ k: 'tous', t: 'Toutes' }, { k: 'attente', t: '🟠 En attente' }, { k: 'confirmee', t: '🟢 Confirmées' }, { k: 'refusee', t: '🔴 Refusées' }].forEach(function(f){
+    var b = document.createElement('button');
+    b.className = 'cmd-filtre' + (FILTRE.statut === f.k ? ' actif' : '');
+    b.textContent = f.t;
+    b.addEventListener('click', function(){ FILTRE.statut = f.k; construireCommandes(rows); });
+    filtres.appendChild(b);
+  });
+  SITE.vehicules.forEach(function(v){
+    var b = document.createElement('button');
+    b.className = 'cmd-filtre' + (FILTRE.veh === v.id ? ' actif' : '');
+    b.textContent = '🚗 ' + v.nom.split(' ').slice(-2).join(' ');
+    b.addEventListener('click', function(){
+      FILTRE.veh = (FILTRE.veh === v.id) ? 'tous' : v.id;
+      construireCommandes(rows);
+    });
+    filtres.appendChild(b);
+  });
+  card.appendChild(filtres);
+  var visibles = rows.filter(function(r){
+    return (FILTRE.statut === 'tous' || r.statut === FILTRE.statut) &&
+           (FILTRE.veh === 'tous' || r.vehicule === FILTRE.veh);
+  });
+  if(!visibles.length){
+    var vide = document.createElement('p');
+    vide.className = 'vide-note';
+    vide.textContent = 'Aucune commande dans cette catégorie.';
+    card.appendChild(vide);
+    return;
+  }
+  visibles.forEach(function(rw){
+    var item = document.createElement('div');
+    item.className = 'cmd-item';
+    var v = vehById(rw.vehicule);
+    var tete = document.createElement('div');
+    tete.className = 'cmd-tete';
+    var badgeCls = rw.statut === 'confirmee' ? 'cmd-confirmee' : (rw.statut === 'refusee' ? 'cmd-refusee' : 'cmd-attente');
+    var badgeTxt = rw.statut === 'confirmee' ? '🟢 Confirmée' : (rw.statut === 'refusee' ? '🔴 Refusée' : '🟠 En attente');
+    tete.innerHTML = '<span class="cmd-nom"></span>' +
+      '<span class="cmd-badge ' + badgeCls + '">' + badgeTxt + '</span>' +
+      '<span class="cmd-prix">' + prixResa(rw).toLocaleString('fr-FR') + ' €</span>';
+    tete.querySelector('.cmd-nom').textContent = rw.nom || 'Sans nom';
+    item.appendChild(tete);
+    var infos = document.createElement('div');
+    infos.className = 'cmd-infos';
+    var lignes = [
+      '🚗 <b>' + (v ? v.nom : rw.vehicule) + '</b>',
+      '📅 <b>' + fdate(rw.debut) + ' → ' + fdate(rw.fin) + '</b> (' + joursResa(rw) + ' j)',
+      '📞 <a href="tel:' + (rw.telephone || '') + '">' + (rw.telephone || '—') + '</a>'
+    ];
+    if(rw.email) lignes.push('✉️ <a href="mailto:' + rw.email + '">' + rw.email + '</a>');
+    if(rw.ville) lignes.push('🏙️ ' + String(rw.ville).replace(/</g, '&lt;'));
+    if(rw.age) lignes.push('🎂 ' + rw.age + ' ans');
+    lignes.push('🕐 Reçue le ' + fdate(rw.created_at));
+    infos.innerHTML = lignes.map(function(l){ return '<span>' + l + '</span>'; }).join('');
+    item.appendChild(infos);
+    if(rw.message){
+      var msg = document.createElement('p');
+      msg.className = 'cmd-msg';
+      msg.textContent = '💬 ' + rw.message;
+      item.appendChild(msg);
+    }
+    var actions = document.createElement('div');
+    actions.className = 'adm-row';
+    actions.style.marginTop = '12px';
+    function btnAction(txt, statut){
+      var b = document.createElement('button');
+      b.className = 'btn btn-ghost';
+      b.style.cssText = 'padding:8px 14px;font-size:.82rem';
+      b.textContent = txt;
+      b.addEventListener('click', function(){
+        var opts = statut === null
+          ? { method: 'DELETE' }
+          : { method: 'PATCH', body: JSON.stringify({ statut: statut }) };
+        opts.headers = {
+          apikey: SITE.config.serveur.cle,
+          Authorization: 'Bearer ' + SESSION_TOKEN,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        };
+        fetch(urlServeur('/rest/v1/reservations?id=eq.' + rw.id), opts).then(function(){
+          chargerReservations();
+          chargerToutesCommandes().then(function(nrows){ construireCommandes(Array.isArray(nrows) ? nrows : []); });
+        });
+      });
+      return b;
+    }
+    if(rw.statut !== 'confirmee') actions.appendChild(btnAction('✅ Confirmer', 'confirmee'));
+    if(rw.statut !== 'refusee') actions.appendChild(btnAction('❌ Refuser', 'refusee'));
+    actions.appendChild(btnAction('🗑 Supprimer', null));
+    if(rw.telephone){
+      var wa = document.createElement('a');
+      wa.className = 'btn btn-wa';
+      wa.style.cssText = 'padding:8px 14px;font-size:.82rem';
+      wa.target = '_blank';
+      wa.rel = 'noopener';
+      wa.href = 'https://wa.me/' + telWa(rw.telephone) + '?text=' + encodeURIComponent('Bonjour ' + (rw.nom || '') + ', concernant votre demande de location du ' + fdate(rw.debut) + ' au ' + fdate(rw.fin) + ' :');
+      wa.textContent = '💬 WhatsApp';
+      actions.appendChild(wa);
+    }
+    item.appendChild(actions);
+    card.appendChild(item);
+  });
+}
+
+function ouvrirStats(){
+  var card = document.getElementById('stats-card');
+  card.innerHTML = '<p class="adm-note">Calcul des statistiques…</p>';
+  statsModal.classList.add('open');
+  chargerToutesCommandes().then(function(rows){
+    if(!Array.isArray(rows)) rows = [];
+    construireStats(rows);
+  }).catch(function(){
+    card.innerHTML = '<p class="adm-note">❌ Impossible de charger les statistiques.</p>';
+  });
+}
+function barreH(nom, valeur, max, texte){
+  var pct = max > 0 ? Math.round(100 * valeur / max) : 0;
+  return '<div class="occ-row"><span class="occ-nom">' + nom + '</span>' +
+    '<span class="occ-track"><span class="occ-fill" style="width:' + pct + '%"></span></span>' +
+    '<span class="occ-pct" style="flex-basis:76px">' + texte + '</span></div>';
+}
+function construireStats(rows){
+  var card = document.getElementById('stats-card');
+  var confirmees = rows.filter(function(r){ return r.statut === 'confirmee'; });
+  var attente = rows.filter(function(r){ return r.statut === 'attente'; });
+  var totalRevenus = 0, totalJours = 0;
+  confirmees.forEach(function(r){ totalRevenus += prixResa(r); totalJours += joursResa(r); });
+  var conversion = rows.length ? Math.round(100 * confirmees.length / rows.length) : 0;
+  var panier = confirmees.length ? Math.round(totalRevenus / confirmees.length) : 0;
+  var dureeMoy = confirmees.length ? (totalJours / confirmees.length).toFixed(1) : 0;
+  var moisData = [];
+  for(var i = 5; i >= 0; i--){
+    var ref = new Date(calNow.getFullYear(), calNow.getMonth() - i, 1);
+    moisData.push({ a: ref.getFullYear(), m: ref.getMonth(), label: MOIS[ref.getMonth()].slice(0, 4) + '. ' + String(ref.getFullYear()).slice(2), total: 0 });
+  }
+  confirmees.forEach(function(r){
+    var v = vehById(r.vehicule);
+    if(!v) return;
+    for(var d = new Date(r.debut); d <= new Date(r.fin); d.setDate(d.getDate() + 1)){
+      moisData.forEach(function(md){
+        if(d.getFullYear() === md.a && d.getMonth() === md.m) md.total += v.prix;
+      });
+    }
+  });
+  var maxMois = Math.max.apply(null, moisData.map(function(m){ return m.total; }).concat([1]));
+  var parVeh = SITE.vehicules.map(function(v){
+    var revenus = 0, jours = 0, demandes = 0;
+    rows.forEach(function(r){
+      if(r.vehicule !== v.id) return;
+      demandes++;
+      if(r.statut === 'confirmee'){ revenus += prixResa(r); jours += joursResa(r); }
+    });
+    return { nom: v.nom, revenus: revenus, jours: jours, demandes: demandes };
+  });
+  var maxVeh = Math.max.apply(null, parVeh.map(function(x){ return x.revenus; }).concat([1]));
+  var h = '<button class="cal-close" id="stats-close">✕</button>' +
+    '<h3 class="adm-titre">📈 Statistiques</h3>' +
+    '<div class="dash-grid" style="margin-top:14px">' +
+    '<div class="dash-tile"><div class="dash-num">' + rows.length + '</div><div class="dash-lab">📋 Demandes reçues</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + conversion + '%</div><div class="dash-lab">✅ Taux de confirmation</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + totalRevenus.toLocaleString('fr-FR') + ' €</div><div class="dash-lab">💶 Revenus confirmés (total)</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + panier.toLocaleString('fr-FR') + ' €</div><div class="dash-lab">🛒 Panier moyen</div></div>' +
+    '<div class="dash-tile"><div class="dash-num">' + dureeMoy + ' j</div><div class="dash-lab">⏱ Durée moyenne</div></div>' +
+    '<div class="dash-tile' + (attente.length ? ' dash-alerte' : '') + '"><div class="dash-num">' + attente.length + '</div><div class="dash-lab">🟠 À traiter</div></div>' +
+    '</div>' +
+    '<div class="stat-bloc"><p class="dash-soustitre">Revenus confirmés — 6 derniers mois</p>' +
+    moisData.map(function(md){ return barreH(md.label, md.total, maxMois, md.total.toLocaleString('fr-FR') + ' €'); }).join('') + '</div>' +
+    '<div class="stat-bloc"><p class="dash-soustitre">Revenus par véhicule</p>' +
+    parVeh.map(function(x){ return barreH(x.nom, x.revenus, maxVeh, x.revenus.toLocaleString('fr-FR') + ' €'); }).join('') + '</div>' +
+    '<div class="stat-bloc"><p class="dash-soustitre">Activité par véhicule</p>' +
+    parVeh.map(function(x){ return '<div class="occ-row"><span class="occ-nom">' + x.nom + '</span><span style="flex:1;font-size:.84rem;color:var(--muted)">' + x.demandes + ' demande' + (x.demandes > 1 ? 's' : '') + ' · ' + x.jours + ' jour' + (x.jours > 1 ? 's' : '') + ' loué' + (x.jours > 1 ? 's' : '') + '</span></div>'; }).join('') + '</div>' +
+    (rows.length ? '' : '<p class="vide-note">Les statistiques se rempliront avec vos premières commandes.</p>');
+  card.innerHTML = h;
+  document.getElementById('stats-close').addEventListener('click', fermerVues);
 }
 
 /* =====================================================
