@@ -604,6 +604,7 @@
         <a class="btn btn-ghost" id="btn-mail" href="#">✉️ Email</a>
       </div>
       <p class="quick-note">Disponible 7j/7 — de 8h à 21h</p>
+      <div id="lieu-retrait"></div>
     </div>
 
     <div class="contact-card">
@@ -996,6 +997,13 @@ function renderContact(){
   var mail = document.getElementById('btn-mail');
   mail.href = 'mailto:' + c.email + '?subject=' + encodeURIComponent('Demande de location');
   mail.textContent = '✉️ ' + c.email;
+  var lieu = document.getElementById('lieu-retrait');
+  if(lieu){
+    lieu.innerHTML = SITE.config.adresse
+      ? '<p style="margin-top:18px;font-size:.9rem"><b>📍 Retrait :</b> ' + String(SITE.config.adresse).replace(/</g, '&lt;') + '</p>' +
+        '<iframe src="https://maps.google.com/maps?q=' + encodeURIComponent(SITE.config.adresse) + '&output=embed" style="width:100%;height:180px;border:1px solid var(--line);border-radius:12px;margin-top:10px" loading="lazy" title="Lieu de retrait"></iframe>'
+      : '';
+  }
   document.getElementById('footer-flotte').textContent =
     'Location de véhicules entre particuliers — ' + SITE.vehicules.map(function(v){ return v.nom; }).join(' · ');
 }
@@ -1374,6 +1382,7 @@ function fermerAdmin(){
 }
 document.getElementById('admin-link').addEventListener('click', function(e){
   e.preventDefault();
+  if(serveurActif()){ window.location.href = 'admin.html'; return; }
   ouvrirLogin();
 });
 document.getElementById('adm-login-close').addEventListener('click', fermerAdmin);
@@ -2167,6 +2176,17 @@ function construireStats(rows){
    ===================================================== */
 renderAll();
 chargerDepuisServeur();
+/* comptage des visites (une par session de navigation) */
+try{
+  if(serveurActif() && !sessionStorage.getItem('lb_vu')){
+    fetch(urlServeur('/rest/v1/visites'), {
+      method: 'POST',
+      headers: { apikey: SITE.config.serveur.cle, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: '{}'
+    }).catch(function(){});
+    sessionStorage.setItem('lb_vu', '1');
+  }
+}catch(e){}
 document.querySelectorAll('#fleet .car').forEach(function(el){ obs.observe(el); });
 document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){ obs.observe(el); });
 
